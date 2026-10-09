@@ -1,0 +1,23 @@
+{
+  "Devolutions/UniGetUI": 26388,
+  "Homebrew/brew": 49898,
+  "OpenHands/OpenHands": 90072,
+  "ScoopInstaller/Main": 1873,
+  "caddyserver/caddy": 77568,
+  "cubrid-lab/cubrid-cookbook-python": 28,
+  "ente/ente": 29244,
+  "foundry-rs/foundry": 10645,
+  "freeCodeCamp/freeCodeCamp": 456783,
+  "glpi-project/glpi": 6422,
+  "gotempsh/temps": 818,
+  "kornia/kornia": 11400,
+  "lichess-org/lila": 18806,
+  "mvschwarz/openrig": 5521,
+  "nautechsystems/nautilus_trader": 29740,
+  "nightscout/cgm-remote-monitor": 2835,
+  "openboxes/openboxes": 909,
+  "openclaw/openclaw": 391521,
+  "openfoodfacts/openfoodfacts-server": 1169,
+  "rlaope/oh-my-hermes": 3164,
+  "termux/termux-packages": 17092
+}

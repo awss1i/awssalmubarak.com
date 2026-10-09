@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Awss Al-Mubarak</title>
+<meta name="description" content="A public record of merged open-source pull requests across every domain, plus the tools I build.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Awss Al-Mubarak">
+<meta property="og:title" content="Awss Al-Mubarak">
+<meta property="og:description" content="A public record of merged open-source pull requests across every domain, plus the tools I build.">
+<meta property="og:url" content="https://awssalmubarak.com/">
+<meta property="og:image" content="https://awssalmubarak.com/assets/og.png">
+<meta property="og:image:width" content="2560">
+<meta property="og:image:height" content="1280">
+<meta property="og:image:alt" content="awss al-mubarak">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Awss Al-Mubarak">
+<meta name="twitter:description" content="A public record of merged open-source pull requests across every domain, plus the tools I build.">
+<meta name="twitter:image" content="https://awssalmubarak.com/assets/og.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@48,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+/* home: a merge console. the running total anchors the top-left, three floating cards sit
+   across a grid, and two gears turn faintly behind them. a wide grid on desktop, a single
+   column on a phone. */
+/* phones and short windows: a single scrolling column. the desktop grid is below. */
+.app{display:flex;flex-direction:column;gap:18px;padding:24px 22px}
+
+.numblock{display:flex;flex-direction:column;gap:3px}
+.count{font-family:var(--display);font-weight:700;font-size:clamp(76px,15vw,128px);line-height:.82;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
+.count-label{font-family:var(--display);font-weight:700;font-size:clamp(22px,4vw,34px);letter-spacing:-.01em;margin-top:4px}
+.statement{font-family:var(--mono);font-size:12.5px;color:var(--read);margin-top:14px;max-width:46ch;line-height:1.65}
+.statement b{color:var(--ink);font-weight:500}
+.numblock .hr{width:min(100%,360px);margin-top:16px}
+.browse{display:inline-block;margin-top:16px;font-size:13.5px;color:var(--accent);white-space:nowrap}
+.browse:hover{text-decoration:underline}
+.opensource{display:block;margin-top:14px;text-decoration:none}
+.opensource .os-main{font-size:13px;color:var(--accent)}
+.opensource:hover .os-main{text-decoration:underline}
+.opensource .os-desc{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+
+.about{display:flex;flex-direction:column;gap:11px}
+.about-line{font-size:14.5px;color:var(--ink);font-weight:500;max-width:40ch;line-height:1.45}
+.contact{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:13px;color:var(--muted)}
+.email{color:var(--muted);user-select:all;margin-right:2px}
+.email:hover{color:var(--accent)}
+.soc{display:inline-flex;color:var(--read);transition:color .14s,transform .14s}
+.soc svg{width:19px;height:19px;fill:currentColor;display:block}
+.soc:hover{color:var(--accent);transform:translateY(-2px)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 17px;display:flex;flex-direction:column;min-height:0;
+  box-shadow:0 18px 40px -24px rgba(0,0,0,.72);animation:breathe 4.6s ease-in-out infinite, float 7.5s ease-in-out infinite}
+.card-featured{animation-delay:.9s,1.3s}
+.card-builds{animation-delay:1.8s,2.6s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes breathe{0%,100%{box-shadow:0 18px 40px -24px rgba(0,0,0,.72),0 0 0 1px transparent}50%{box-shadow:0 22px 48px -22px rgba(0,0,0,.78),0 0 0 1px rgba(var(--pulse),.26)}}
+.card-h{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--muted);padding-bottom:9px;margin-bottom:5px;border-bottom:1px solid var(--line)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:ping 1.8s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(var(--pulse),.5)}70%{box-shadow:0 0 0 7px rgba(var(--pulse),0)}100%{box-shadow:0 0 0 0 rgba(var(--pulse),0)}}
+
+.rec{display:block;padding:7px 2px;border-bottom:1px solid var(--line)}
+.rec:last-child{border-bottom:none}
+.rec:hover{background:var(--accent-soft)}
+.rec-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.rec-repo{font-family:var(--mono);font-size:12.5px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:2px;display:flex;flex-wrap:wrap;gap:2px 11px}
+.rec-pr{color:var(--accent)}
+.rt-right{display:flex;align-items:baseline;gap:9px;flex-shrink:0}
+.rec-stars{font-family:var(--mono);font-size:11px;font-weight:500;white-space:nowrap;color:var(--star)}
+
+.sel{display:block;padding:8px 2px;border-bottom:1px solid var(--line)}
+.sel:last-child{border-bottom:none}
+.sel:hover .sel-repo{color:var(--accent)}
+.sel-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px 12px}
+.sel-left{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;min-width:0}
+.sel-repo{font-size:13.5px;font-weight:600;min-width:0}
+.sel-stack{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sel-pr{font-family:var(--mono);font-size:11px;color:var(--accent)}
+.sel-right{display:flex;align-items:baseline;gap:10px;flex-shrink:0}
+.sel-stars{font-family:var(--mono);font-size:11px;font-weight:500;white-space:nowrap;color:var(--star)}
+.sel-body{font-size:12px;color:var(--read);line-height:1.5;margin-top:3px}
+
+.brow{display:flex;align-items:baseline;gap:10px;padding:7px 2px;border-bottom:1px solid var(--line)}
+.brow:last-child{border-bottom:none}
+.bn{font-size:14px;font-weight:600}
+.brow:hover .bn{color:var(--accent)}
+.btag{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.blang{color:var(--accent);font-weight:500}
+.btag.star{color:var(--star)}
+.bbody{font-size:12px;color:var(--read);line-height:1.5;margin:3px 2px 9px}
+.card-more{display:inline-block;margin-top:11px;font-size:12.5px;color:var(--accent)}
+.card-more:hover{text-decoration:underline}
+
+.gears{display:none}
+.gearsvg{position:absolute;inset:0;width:100%;height:100%}
+.gearsvg path,.gearsvg circle{fill:none;stroke:var(--accent);stroke-width:2;opacity:.12}
+.gear{transform-origin:0 0}
+.gear-big{animation:spin 36s linear infinite}
+.gear-small{animation:spin 24s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media (min-width:980px) and (min-height:620px){
+  .app{
+    position:relative; padding:40px 5% 40px;
+    display:grid; gap:22px 26px; align-content:start;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,0.9fr);
+    grid-template-areas:
+      "num      recent    recent"
+      "num      featured  builds"
+      "about    featured  builds";
+  }
+  .gears{display:block;position:absolute;inset:0;z-index:0;pointer-events:none}
+  .numblock,.about,.card{z-index:1}
+  .numblock{grid-area:num; align-self:start}
+  .count{font-size:clamp(96px,11vw,176px)}
+  .card-recent{grid-area:recent}
+  .card-featured{grid-area:featured}
+  .card-builds{grid-area:builds; align-self:start}
+  .about{grid-area:about; align-self:end; margin-top:8px}
+}
+/* phones and short windows: pin the contact block to the bottom so a short page
+   does not leave dead space below it. */
+@media (max-width:979px), (max-height:619px){
+  body.home{display:flex; flex-direction:column; min-height:100dvh}
+  .app{flex:1 1 auto}
+  .about{margin-top:auto}
+}
+</style>
+</head>
+<body class="home">
+  <header class="bar">
+    <a class="brand" href="/">awss al-mubarak</a>
+    <nav class="nav">
+      <a class="on" href="/">home</a>
+      <a href="/contributions">contributions</a>
+      <a href="/builds">builds</a>
+      <span class="skins" id="skins" role="group" aria-label="theme">
+        <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
+        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
+      </span>
+    </nav>
+  </header>
+
+  <div class="app">
+    <div class="gears"><svg class="gearsvg" viewBox="0 0 1000 560" preserveAspectRatio="xMinYMid slice"></svg></div>
+    <section class="numblock">
+      <div class="count" id="count">0</div>
+      <div class="count-label">merged pull requests</div>
+      <div class="statement" id="statement"></div>
+      <div class="hr"></div>
+      <a class="browse" href="/contributions">browse all contributions</a>
+      <a class="opensource" href="https://github.com/awss1i/awssalmubarak.com" target="_blank" rel="noopener"><span class="os-main">this site is open source</span><span class="os-desc">Designed and built by me, no framework.</span></a>
+    </section>
+    <section class="card card-recent">
+      <div class="card-h"><span class="dot"></span>recent merges</div>
+      <div class="rec-list" id="rec-list"></div>
+    </section>
+    <section class="card card-featured">
+      <div class="card-h">featured merges</div>
+      <div class="sel-list" id="sel-list"></div>
+    </section>
+    <section class="card card-builds">
+      <div class="card-h">builds</div>
+      <div class="build-list" id="build-list"></div>
+    </section>
+    <section class="about">
+      <div class="about-line">18, London. Open to remote or London-based roles, and to contract work.</div>
+      <div class="contact">
+        <a class="email" href="mailto:awss@awssalmubarak.com">awss@awssalmubarak.com</a>
+        <a class="soc" href="https://github.com/awss1i" target="_blank" rel="noopener" aria-label="github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.2 11.16.6.11.82-.25.82-.56v-2.1c-3.34.72-4.04-1.6-4.04-1.6-.55-1.37-1.34-1.74-1.34-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.22 1.84 1.22 1.07 1.8 2.8 1.28 3.49.98.11-.76.42-1.28.76-1.57-2.67-.3-5.47-1.31-5.47-5.84 0-1.29.47-2.34 1.23-3.17-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.3-1.53 3.3-1.21 3.3-1.21.65 1.65.24 2.87.12 3.17.77.83 1.23 1.88 1.23 3.17 0 4.54-2.81 5.53-5.49 5.83.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12.02 12.02 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"/></svg></a>
+        <a class="soc" href="https://x.com/awss1i" target="_blank" rel="noopener" aria-label="x"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg></a>
+        <a class="soc" href="https://www.linkedin.com/in/awss-al-mubarak-5a6187437/" target="_blank" rel="noopener" aria-label="linkedin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.74v20.52C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.74V1.74C24 .78 23.2 0 22.22 0z"/></svg></a>
+      </div>
+    </section>
+  </div>
+
+  <script id="data" type="application/json">__DATA__</script>
+  <script src="/assets/site.js"></script>
+  <script>
+  (function(){
+    "use strict";
+    var D = JSON.parse(document.getElementById("data").textContent);
+    function esc(x){ return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function safeUrl(u){ u=String(u==null?"":u); return (/^https?:\/\//i.test(u)||u.charAt(0)==="/"||u.charAt(0)==="#") ? u.replace(/"/g,"%22") : "#"; }
+    function badge(o){ return '<span class="origin '+o+'">'+(o==="found"?"found &amp; fixed":"known issue")+'</span>'; }
+    function nfmt(n){ return n.toLocaleString("en-US"); }
+    function sfmt(n){ if(n>=1e7) return Math.round(n/1e6)+"M"; if(n>=1e6) return (n/1e6).toFixed(2)+"M"; if(n>=1e3) return Math.round(n/1e3)+"k"; return ""+n; }
+
+    var s = D.stats;
+    document.getElementById("statement").innerHTML =
+      "across <b>"+nfmt(s.repos)+" repositories</b>, <b>"+nfmt(s.stacks)+" languages and technologies</b>, and <b>"+sfmt(s.stars)
+      +" stars</b> between them. <b>"+nfmt(s.found)+"</b> found and fixed, <b>"+nfmt(s.known)+"</b> picked up and resolved.";
+
+    document.getElementById("rec-list").innerHTML = D.recent.map(function(it){
+      return '<a class="rec" href="'+safeUrl(it.pr.url)+'" target="_blank" rel="noopener">'
+        + '<div class="rec-top"><span class="rec-repo">'+esc(it.repo)+'</span>'
+        + '<span class="rt-right"><span class="rec-stars">&#9733; '+esc(it.stars)+'</span>'+badge(it.pr.origin)+'</span></div>'
+        + '<div class="rec-meta"><span class="rec-pr">'+esc(it.pr.label)+'</span><span>'+esc(it.pr.date)+'</span><span>'+esc(it.pr.stack.join(", "))+'</span></div></a>';
+    }).join("");
+
+    document.getElementById("sel-list").innerHTML = D.featured.map(function(it){
+      return '<a class="sel" href="'+safeUrl(it.pr.url)+'" target="_blank" rel="noopener"><div class="sel-top">'
+        + '<span class="sel-left"><span class="sel-repo">'+esc(it.repo)+'</span>'+badge(it.pr.origin)+'<span class="sel-stack">'+esc(it.pr.stack.join(", "))+'</span></span>'
+        + '<span class="sel-right"><span class="sel-stars">&#9733; '+esc(it.stars)+'</span><span class="sel-pr">'+esc(it.pr.label)+'</span></span></div>'
+        + '<p class="sel-body">'+esc(it.blurb)+'</p></a>';
+    }).join("");
+
+    var builds = D.builds || [], bout = "", n = Math.min(builds.length, 3);
+    for(var i=0;i<n;i++){ var b=builds[i];
+      bout += '<a class="brow" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener"><span class="bn">'+esc(b.name)+'</span>'
+        + '<span class="btag blang">'+esc(b.language)+'</span><span class="btag star">&#9733; '+esc(b.stars)+'</span></a>'
+        + '<p class="bbody">'+esc(b.home_tagline || b.tagline)+'</p>';
+    }
+    bout += '<a class="card-more" href="/builds">view all builds</a>';
+    document.getElementById("build-list").innerHTML = bout;
+
+    (function(){
+      var ns="http://www.w3.org/2000/svg", svg=document.querySelector(".gearsvg");
+      if(!svg) return;
+      function gearD(teeth,rOut,rIn){ var step=2*Math.PI/teeth, d="";
+        for(var i=0;i<teeth;i++){ var a=i*step, p=[[rIn,a],[rOut,a+step*0.22],[rOut,a+step*0.5],[rIn,a+step*0.72]];
+          for(var j=0;j<4;j++){ var r=p[j][0], ang=p[j][1]; d+=(i===0&&j===0?"M":"L")+(r*Math.cos(ang)).toFixed(1)+","+(r*Math.sin(ang)).toFixed(1)+" "; } }
+        return d+"Z"; }
+      function add(cx,cy,teeth,rOut,rIn,rHub,cls){
+        var outer=document.createElementNS(ns,"g"); outer.setAttribute("transform","translate("+cx+","+cy+")");
+        var inner=document.createElementNS(ns,"g"); inner.setAttribute("class","gear "+cls);
+        var path=document.createElementNS(ns,"path"); path.setAttribute("d",gearD(teeth,rOut,rIn)); inner.appendChild(path);
+        var ring=document.createElementNS(ns,"circle"); ring.setAttribute("r",(rIn*0.55).toFixed(1)); inner.appendChild(ring);
+        var hub=document.createElementNS(ns,"circle"); hub.setAttribute("r",rHub); inner.appendChild(hub);
+        outer.appendChild(inner); svg.appendChild(outer);
+      }
+      add(270,390,18,152,126,30,"gear-big");
+      add(150,200,12,104,86,22,"gear-small");
+    })();
+
+    var el=document.getElementById("count"), to=s.merged||0, reduce=false;
+    try{ reduce=matchMedia("(prefers-reduced-motion:reduce)").matches; }catch(e){}
+    if(reduce || to<=0){ el.textContent=nfmt(to); return; }
+    var start=null;
+    function step(ts){ if(start===null) start=ts; var p=Math.min((ts-start)/900,1), e=1-Math.pow(1-p,3);
+      el.textContent=nfmt(Math.round(e*to)); if(p<1) requestAnimationFrame(step); }
+    requestAnimationFrame(step);
+  })();
+  </script>
+</body>
+</html>

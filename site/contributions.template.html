@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Contributions</title>
+<meta name="description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Awss Al-Mubarak">
+<meta property="og:title" content="Contributions &middot; Awss Al-Mubarak">
+<meta property="og:description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta property="og:url" content="https://awssalmubarak.com/contributions/">
+<meta property="og:image" content="https://awssalmubarak.com/assets/og.png">
+<meta property="og:image:width" content="2560">
+<meta property="og:image:height" content="1280">
+<meta property="og:image:alt" content="awss al-mubarak">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Contributions &middot; Awss Al-Mubarak">
+<meta name="twitter:description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta name="twitter:image" content="https://awssalmubarak.com/assets/og.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@48,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+/* contributions: the full ledger. search by stack, sort by stars, newest or name, expand a repo
+   to its merges. a plain scrolling page. */
+.wrap{max-width:1200px;margin:0 auto;padding-inline:24px;padding-block:40px 80px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;letter-spacing:-.02em;margin:0}
+.headline{font-size:14px;color:var(--read);margin-top:8px;max-width:70ch;line-height:1.55}
+.headline b{color:var(--ink);font-weight:500}
+.headline + .hr{margin-top:14px;width:min(100%,480px)}
+
+.toolbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:18px 0 12px;margin-top:22px;border-bottom:1px solid var(--sep)}
+.searchbar{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px 9px 13px}
+.searchbar:focus-within{border-color:var(--accent)}
+.search{flex:1;min-width:0;border:none;background:none;font-family:var(--sans);font-size:14.5px;color:var(--ink);padding:2px 0}
+.search::placeholder{color:var(--muted)}
+.search:focus{outline:none}
+.clearx{background:none;border:none;color:var(--muted);cursor:pointer;font-size:17px;line-height:1;padding:2px 4px;flex-shrink:0}
+.clearx:hover{color:var(--accent)}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.seg button{background:none;border:none;font-size:12.5px;color:var(--muted);padding:6px 13px;cursor:pointer;white-space:nowrap}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--accent);color:var(--accent-fg)}
+.seg .dir{font-size:.82em;margin-left:2px}
+.seg button:not(.on):hover{color:var(--ink)}
+.sortlabel{font-size:12px;color:var(--muted);margin-left:auto}
+
+.list{display:flex;flex-direction:column}
+.vlbody{position:relative;width:100%;flex:0 0 auto}
+.vlbody .repo{position:absolute;left:0;right:0}
+.repo{border-bottom:1px solid var(--line)}
+.repo-head{display:flex;align-items:baseline;gap:12px;width:100%;padding:13px 2px;cursor:pointer}
+.repo-head:hover .repo-name{color:var(--accent)}
+.caret{color:var(--muted);font-size:11px;transition:transform .14s;flex-shrink:0;align-self:center}
+.repo.open .caret{transform:rotate(90deg)}
+.repo-name{font-size:16px;font-weight:600;word-break:break-word;flex:0 1 auto;min-width:0}
+.repo-stars{font-size:13.5px;font-weight:600;white-space:nowrap;color:var(--star);margin-left:auto}
+.repo-n{font-size:12.5px;color:var(--muted);white-space:nowrap;min-width:46px;text-align:right}
+.repo-prs{display:none;padding:0 2px 14px 26px}
+.repo.open .repo-prs{display:block}
+.prline{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:5px 10px;align-items:center;padding:4px 0;line-height:1.5}
+.sep{color:var(--muted);opacity:.5;font-size:11px}
+.prnum{color:var(--accent);font-weight:500}
+.prnum:hover{text-decoration:underline}
+.prstack{color:var(--read)}
+.carried a{color:var(--accent)}
+.carried a:hover{text-decoration:underline}
+.empty{color:var(--muted);font-size:14px;padding-block:30px}
+@keyframes breathe{0%,100%{box-shadow:0 18px 40px -26px rgba(0,0,0,.6),0 0 0 1px transparent}
+  50%{box-shadow:0 22px 48px -22px rgba(0,0,0,.68),0 0 0 1px rgba(var(--pulse),.28)}}
+
+/* desktop: contained scroll. the wordmark, headline and toolbar stay fixed, and the list is a
+   pulsing box that scrolls inside itself, sitting clear of the bottom of the screen. */
+@media (min-width:980px) and (min-height:620px){
+  body.contrib{height:100%;display:flex;flex-direction:column;overflow:hidden}
+  .contrib .wrap{flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;padding-block:26px 52px}
+  .contrib .toolbar{position:static}
+  .contrib .list{flex:1 1 auto;min-height:0;margin-top:18px;overflow-y:auto;
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 24px;
+    box-shadow:0 18px 40px -26px rgba(0,0,0,.6);animation:breathe 4.6s ease-in-out infinite;
+    scrollbar-gutter:stable}
+  .contrib .list::-webkit-scrollbar{width:12px}
+  .contrib .list::-webkit-scrollbar-track{background:transparent;margin:16px 0}
+  .contrib .list::-webkit-scrollbar-button{display:none;height:0;width:0}
+  .contrib .list::-webkit-scrollbar-button:single-button{display:none;height:0;width:0}
+  .contrib .list::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px;border:4px solid var(--surface)}
+  .contrib .list::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+}
+
+/* backdrop: a faint git merge-graph flowing down behind the page, offset to the right like the
+   home gears. a trunk carries commits, branches curve out and merge back, and commits flow along
+   the branches. it sits behind the ledger box and reads in the margin beside it. */
+/* the top bar is transparent in the shared shell, so keep the backdrop from showing through the
+   nav by giving the bar the page background on this page only. */
+.bar{background:var(--bg)}
+.backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.mgraph{position:absolute;top:-7vh;height:120vh;width:auto}
+.mgraph.right{right:-9vw}
+.mgraph.left{left:-9vw;transform:scaleX(-1)}
+.mgraph .trunk,.mgraph .branch{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.mgraph .trunk{opacity:.17}
+.mgraph .branch{opacity:.21;stroke-dasharray:5 12;animation:mflow 12s linear infinite}
+.mgraph .node{fill:var(--accent);opacity:.22}
+.mgraph .node.hollow{fill:var(--bg);stroke:var(--accent);stroke-width:2;opacity:.3}
+@keyframes mflow{to{stroke-dashoffset:-136}}
+/* phones: drop the backdrop, the page reads cleaner without it at narrow widths */
+@media (max-width:980px){.backdrop{display:none}}
+</style>
+</head>
+<body class="page contrib">
+  <div class="backdrop" aria-hidden="true"></div>
+  <header class="bar">
+    <a class="brand" href="/">awss al-mubarak</a>
+    <nav class="nav">
+      <a href="/">home</a>
+      <a class="on" href="/contributions">contributions</a>
+      <a href="/builds">builds</a>
+      <span class="skins" id="skins" role="group" aria-label="theme">
+        <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
+        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
+      </span>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <h1>Contributions</h1>
+    <div class="headline" id="headline"></div>
+    <div class="hr"></div>
+    <div class="toolbar">
+      <div class="searchbar">
+        <input class="search" id="search" type="text" placeholder="search a stack: python, rust, docker&hellip;" autocomplete="off" spellcheck="false" aria-label="search by stack">
+        <button class="clearx" id="clearx" type="button" title="clear" aria-label="clear search" hidden>&times;</button>
+      </div>
+      <div class="controls">
+        <div class="seg" id="origin" role="group" aria-label="found or known">
+          <button type="button" data-o="all" class="on">all</button>
+          <button type="button" data-o="found">found &amp; fixed</button>
+          <button type="button" data-o="known">known</button>
+        </div>
+        <span class="sortlabel">sort</span>
+        <div class="seg" id="sort" role="group" aria-label="sort">
+          <button type="button" data-s="stars" class="on">stars<span class="dir"></span></button>
+          <button type="button" data-s="newest">newest<span class="dir"></span></button>
+          <button type="button" data-s="az">a-z<span class="dir"></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+  </main>
+
+  <script>
+  /* build the merge-graph backdrop on both sides of the page: a trunk, four branches that curve
+     out and merge back, and commit nodes along each. the branches carry a flowing dash so commits
+     appear to move. the left copy is mirrored in CSS so the two lean away from the ledger. */
+  (function(){
+    var NS="http://www.w3.org/2000/svg", W=520, H=1100, mx=260;
+    function el(n){ return document.createElementNS(NS,n); }
+    function buildGraph(side){
+      var svg=el("svg");
+      svg.setAttribute("class","mgraph "+side); svg.setAttribute("viewBox","0 0 "+W+" "+H);
+      svg.setAttribute("preserveAspectRatio","xMidYMid slice"); svg.setAttribute("aria-hidden","true");
+      function node(x,y,hollow){ var c=el("circle"); c.setAttribute("class","node"+(hollow?" hollow":""));
+        c.setAttribute("cx",x); c.setAttribute("cy",y); c.setAttribute("r",hollow?6:5); svg.appendChild(c); }
+      function path(cls,d){ var p=el("path"); p.setAttribute("class",cls); p.setAttribute("d",d); svg.appendChild(p); }
+      path("trunk","M"+mx+" -20 L"+mx+" "+(H+20));
+      function branch(x,y0,y1){ var r=72;
+        path("branch","M"+mx+" "+y0+" C"+mx+" "+(y0+r*0.7)+" "+x+" "+(y0+r*0.3)+" "+x+" "+(y0+r)
+          +" L"+x+" "+(y1-r)+" C"+x+" "+(y1-r*0.3)+" "+mx+" "+(y1-r*0.7)+" "+mx+" "+y1);
+        for(var y=y0+r+36;y<=y1-r-6;y+=80) node(x,y);
+      }
+      branch(mx+152,120,480); branch(mx-150,300,710); branch(mx+168,540,910); branch(mx-140,760,1090);
+      for(var y=70,i=0;y<H;y+=80,i++) node(mx,y,i%2===0);
+      return svg;
+    }
+    var host=document.querySelector(".backdrop");
+    if(host){
+      host.appendChild(buildGraph("right")); host.appendChild(buildGraph("left"));
+      // start the backdrop at the bottom of the top bar so the graph cuts off exactly there and
+      // never reaches the nav, even when the animated branches get their own compositing layer.
+      var bar=document.querySelector(".bar");
+      var fit=function(){ if(bar) host.style.top=Math.round(bar.getBoundingClientRect().height)+"px"; };
+      fit(); window.addEventListener("resize", fit);
+    }
+  })();
+  </script>
+
+  <script id="data" type="application/json">__DATA__</script>
+  <script src="/assets/site.js"></script>
+  <script>
+  /* the ledger, virtualized. only the repo rows near the viewport (plus a buffer) live in the DOM,
+     a repo's PR lines are built only when it is expanded, and search is debounced and filters the
+     data instead of rebuilding the DOM on every keystroke. the page stays flat whether there are
+     20 repos or 20,000. */
+  (function(){
+    "use strict";
+    var D = JSON.parse(document.getElementById("data").textContent);
+    var listEl=document.getElementById("list"),
+        search=document.getElementById("search"), clearBtn=document.getElementById("clearx"),
+        originEl=document.getElementById("origin"), sortEl=document.getElementById("sort");
+    var state={origin:"all", sort:"stars", dir:1, expanded:{}};
+
+    function esc(x){ return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    // let only http(s) and site-relative links into an href, and neutralise quotes
+    function safeUrl(u){ u=String(u==null?"":u);
+      return (/^https?:\/\//i.test(u)||u.charAt(0)==="/"||u.charAt(0)==="#") ? u.replace(/"/g,"%22") : "#"; }
+    function nfmt(n){ return n.toLocaleString("en-US"); }
+    function sfmt(n){ if(n>=1e7) return Math.round(n/1e6)+"M"; if(n>=1e6) return (n/1e6).toFixed(2)+"M"; if(n>=1e3) return Math.round(n/1e3)+"k"; return ""+n; }
+    function badge(o){ return '<span class="origin '+o+'">'+(o==="found"?"found &amp; fixed":"known issue")+'</span>'; }
+    function sep(){ return '<span class="sep">&middot;</span>'; }
+
+    var s=D.stats;
+    document.getElementById("headline").innerHTML =
+      "<b>"+nfmt(s.merged)+"</b> merged pull requests across <b>"+nfmt(s.repos)+"</b> repositories, <b>"+nfmt(s.stacks)
+      +"</b> languages and technologies, and <b>"+sfmt(s.stars)+"</b> stars.";
+
+    function visiblePRs(repo, terms){
+      return repo.prs.filter(function(pr){
+        if(state.origin!=="all" && pr.origin!==state.origin) return false;
+        for(var i=0;i<terms.length;i++){ var t=terms[i];
+          if(!(pr.stack||[]).some(function(x){ return x.toLowerCase().indexOf(t)===0; })) return false; }
+        return true;
+      });
+    }
+    function sortRepos(repos){
+      var a=repos.slice(), d=state.dir;
+      if(state.sort==="newest") a.sort(function(x,y){ return (y.top_seq-x.top_seq)*d; });
+      else if(state.sort==="az") a.sort(function(x,y){ return x.name.toLowerCase().localeCompare(y.name.toLowerCase())*d; });
+      else a.sort(function(x,y){ return (y.stars_num-x.stars_num)*d; });
+      return a;
+    }
+    function paintSort(){
+      var all=sortEl.querySelectorAll("button");
+      for(var i=0;i<all.length;i++){
+        var on=all[i].getAttribute("data-s")===state.sort, d=all[i].querySelector(".dir");
+        all[i].classList.toggle("on", on);
+        if(d) d.innerHTML = on ? (state.dir<0?" &#9652;":" &#9662;") : "";
+      }
+    }
+    function prLine(pr){
+      return '<div class="prline"><a class="prnum" href="'+safeUrl(pr.url)+'" target="_blank" rel="noopener">'+esc(pr.label)+'</a>'
+        + sep()+'<span>'+esc(pr.date)+'</span>'
+        + ((pr.stack&&pr.stack.length)?sep()+'<span class="prstack">'+esc(pr.stack.join(", "))+'</span>':"")
+        + sep()+badge(pr.origin)
+        + (pr.carried?sep()+'<span class="carried">carried from <a href="'+safeUrl(pr.carried.url)+'" target="_blank" rel="noopener">'+esc(pr.carried.label)+'</a></span>':"")
+        + '</div>';
+    }
+    function repoHTML(repo, hits, open){
+      return '<div class="repo-head"><span class="caret">&#9656;</span>'
+        + '<span class="repo-name">'+esc(repo.name)+'</span>'
+        + '<span class="repo-stars">&#9733; '+esc(repo.stars)+'</span>'
+        + '<span class="repo-n">'+hits.length+(hits.length===1?" pr":" prs")+'</span></div>'
+        + (open ? '<div class="repo-prs">'+hits.map(prLine).join("")+'</div>' : "");
+    }
+
+    // a tall spacer whose height is the sum of all rows; only the rows near the viewport are in the
+    // DOM, positioned absolutely by their running offset.
+    var vlbody=document.createElement("div"); vlbody.className="vlbody"; listEl.appendChild(vlbody);
+    var rows=[], heights=[], offsets=[0], rendered={}, mode="window";
+    var EST_HEAD=47, EST_PR=27, PAD_OPEN=14, BUFFER=800;
+
+    function isOpen(r){ return r.forceOpen || !!state.expanded[r.repo.name]; }
+    function estHeight(r){ return isOpen(r) ? EST_HEAD + r.hits.length*EST_PR + PAD_OPEN : EST_HEAD; }
+    function recomputeOffsets(){
+      offsets=new Array(rows.length+1); offsets[0]=0;
+      for(var i=0;i<rows.length;i++) offsets[i+1]=offsets[i]+heights[i];
+      vlbody.style.height=offsets[rows.length]+"px";
+    }
+    function detectMode(){ var ov=getComputedStyle(listEl).overflowY; mode=(ov==="auto"||ov==="scroll")?"container":"window"; }
+    function viewport(){
+      if(mode==="container") return {top:listEl.scrollTop, height:listEl.clientHeight};
+      var rect=listEl.getBoundingClientRect();
+      return {top:Math.max(0,-rect.top), height:window.innerHeight};
+    }
+    function findRow(y){
+      if(rows.length===0) return 0;
+      var lo=0, hi=rows.length-1, ans=0;
+      while(lo<=hi){ var mid=(lo+hi)>>1; if(offsets[mid]<=y){ ans=mid; lo=mid+1; } else hi=mid-1; }
+      return ans;
+    }
+    function buildRow(i){
+      var r=rows[i], open=isOpen(r), el=document.createElement("div");
+      el.className="repo"+(open?" open":"");
+      el.setAttribute("data-repo", r.repo.name); el.setAttribute("data-i", i);
+      el.innerHTML=repoHTML(r.repo, r.hits, open);
+      return el;
+    }
+    function renderWindow(){
+      if(rows.length===0){ for(var g in rendered){ if(rendered[g].parentNode) vlbody.removeChild(rendered[g]); } rendered={};
+        vlbody.style.height=""; vlbody.innerHTML='<p class="empty">nothing matches that.</p>'; return; }
+      var vp=viewport(), start=findRow(vp.top-BUFFER), end=findRow(vp.top+vp.height+BUFFER), i;
+      if(start<0) start=0; if(end>rows.length-1) end=rows.length-1;
+      for(var k in rendered){ i=+k; if(i<start||i>end){ vlbody.removeChild(rendered[i]); delete rendered[i]; } }
+      for(i=start;i<=end;i++){ if(!rendered[i]){ var el=buildRow(i); rendered[i]=el; vlbody.appendChild(el); } rendered[i].style.top=offsets[i]+"px"; }
+      measure();
+    }
+    // correct the heights of the rows we just laid out, then keep the row at the top of the view
+    // from jumping when a height above it changes.
+    function measure(){
+      var vp=viewport(), anchor=findRow(vp.top), anchorBefore=offsets[anchor], changed=false;
+      for(var k in rendered){ var i=+k, h=rendered[i].offsetHeight; if(h && Math.abs(h-heights[i])>1){ heights[i]=h; changed=true; } }
+      if(changed){
+        recomputeOffsets();
+        for(var j in rendered){ rendered[+j].style.top=offsets[+j]+"px"; }
+        var delta=offsets[anchor]-anchorBefore;
+        if(delta){ if(mode==="container") listEl.scrollTop+=delta; else window.scrollBy(0,delta); }
+      }
+    }
+    function rebuild(){
+      var q=search.value.trim().toLowerCase(), terms=q?q.split(/\s+/).filter(Boolean):[], searching=q.length>0;
+      rows=[];
+      sortRepos(D.repos).forEach(function(repo){ var hits=visiblePRs(repo,terms); if(hits.length) rows.push({repo:repo, hits:hits, forceOpen:searching}); });
+      heights=rows.map(estHeight);
+      vlbody.innerHTML=""; rendered={};
+      recomputeOffsets();
+      clearBtn.hidden=!q;
+      if(mode==="container") listEl.scrollTop=0;
+      renderWindow();
+    }
+    // measure a real collapsed and a real open row once, so off-screen estimates (and the scrollbar)
+    // stay close to the truth.
+    function calibrate(){
+      var smp=document.createElement("div"); smp.className="repo"; smp.style.cssText="position:absolute;left:0;right:0;visibility:hidden";
+      smp.innerHTML=repoHTML({name:"sample/sample-repository",stars:"12.3k+"},[], false);
+      vlbody.appendChild(smp); if(smp.offsetHeight) EST_HEAD=smp.offsetHeight;
+      smp.className="repo open";
+      var ph=[{label:"#1234",url:"#",date:"jan 2026",stack:["python","rust"],origin:"known"},{label:"#1235",url:"#",date:"jan 2026",stack:["go"],origin:"found"}];
+      smp.innerHTML=repoHTML({name:"sample/sample-repository",stars:"12.3k+"}, ph, true);
+      var oh=smp.offsetHeight; if(oh>EST_HEAD) EST_PR=Math.max(18,Math.round((oh-EST_HEAD-PAD_OPEN)/2));
+      vlbody.removeChild(smp);
+    }
+
+    var ticking=false;
+    function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(function(){ ticking=false; renderWindow(); }); } }
+    function attachScroll(){ (mode==="container"?listEl:window).addEventListener("scroll", onScroll, {passive:true}); }
+
+    listEl.addEventListener("click", function(e){
+      if(e.target.closest("a")) return;
+      var el=e.target.closest(".repo"); if(!el || !vlbody.contains(el)) return;
+      var i=+el.getAttribute("data-i"), r=rows[i]; if(!r) return;
+      if(isOpen(r)) delete state.expanded[r.repo.name]; else state.expanded[r.repo.name]=true;
+      var fresh=buildRow(i); rendered[i]=fresh; vlbody.replaceChild(fresh, el);
+      heights[i]=estHeight(r); recomputeOffsets(); renderWindow();
+    });
+    originEl.addEventListener("click", function(e){ var b=e.target.closest("button[data-o]"); if(!b) return;
+      state.origin=b.getAttribute("data-o"); var all=originEl.querySelectorAll("button");
+      for(var i=0;i<all.length;i++) all[i].classList.toggle("on", all[i]===b); rebuild(); });
+    sortEl.addEventListener("click", function(e){ var b=e.target.closest("button[data-s]"); if(!b) return;
+      var ns=b.getAttribute("data-s");
+      if(ns===state.sort) state.dir=-state.dir; else { state.sort=ns; state.dir=1; }
+      paintSort(); rebuild(); });
+    var deb;
+    search.addEventListener("input", function(){ clearBtn.hidden=!search.value; clearTimeout(deb); deb=setTimeout(rebuild,120); });
+    clearBtn.addEventListener("click", function(){ search.value=""; clearTimeout(deb); rebuild(); search.focus(); });
+    var rz;
+    window.addEventListener("resize", function(){ clearTimeout(rz); rz=setTimeout(function(){
+      var old=mode; detectMode();
+      if(old!==mode){ (old==="container"?listEl:window).removeEventListener("scroll", onScroll); attachScroll(); }
+      heights=rows.map(estHeight);
+      for(var k in rendered){ if(rendered[k].parentNode) vlbody.removeChild(rendered[k]); } rendered={};
+      recomputeOffsets(); renderWindow();
+    },150); });
+
+    detectMode(); attachScroll(); calibrate(); paintSort(); rebuild();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+bench/dist/
+bench/_stress.json
+
+# generated output (rebuilt by site_data.py / build_pages.py, published to the Pages repo)
+/data/contributions.json
+/site/index.html
+/site/contributions/index.html
+/site/builds/index.html

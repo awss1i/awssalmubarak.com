@@ -1,0 +1,6 @@
+[
+  {"key": "ente/ente #13069", "blurb": "A wrong-length key slipped past the one copy endpoint its siblings already guarded, leaving billed files no client could decrypt. Found on a live server, filed with its fix."},
+  {"key": "openclaw/openclaw #151672", "blurb": "A streaming command that hit the open-file limit silently killed the agent's shell. Traced the swallowed error and fixed the spawn."},
+  {"key": "caddyserver/caddy #8156", "blurb": "Giving an ECH public name its own TLS settings in a site block either failed to load or quietly sent the name to Let's Encrypt instead. Now the name keeps those settings."},
+  {"key": "nautechsystems/nautilus_trader #5171", "blurb": "A trading node that restarted with open positions reported them as unpriced for up to a day after their prices arrived. Stopped equity curve snapshots from latching the stale list."}
+]

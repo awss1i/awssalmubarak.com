@@ -1,0 +1,51 @@
+/* shared shell for awssalmubarak.com: theme tokens (three skins), base reset, the top bar,
+   and the few primitives every page uses (origin badge, star and readable-secondary colours).
+   violet is the merge colour. each page adds its own layout CSS on top of this. */
+:root{
+  color-scheme:dark;
+  --bg:#111116; --surface:#1a1a22; --ink:#ececf2; --muted:#a6a6b2; --line:#2a2a34;
+  --accent:#b388f5; --accent-fg:#150a26; --accent-soft:rgba(179,136,245,.15); --pulse:179,136,245;
+  --star:#d8be66; --sep:#30303c; --read:#cacad4;
+  --display:"Bricolage Grotesque","Archivo",system-ui,sans-serif;
+  --sans:"Archivo",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+:root[data-skin="slate"]{
+  --bg:#0f172a; --surface:#1e293b; --ink:#e8edf5; --muted:#94a3b8; --line:#2a3a54;
+  --accent:#38bdf8; --accent-fg:#06222e; --accent-soft:rgba(56,189,248,.14); --pulse:56,189,248;
+  --star:#fbbf24; --sep:#2f405c; --read:#c5d0e0;
+}
+:root[data-skin="nordic"]{
+  --bg:#1e2430; --surface:#242c3d; --ink:#e6eaf2; --muted:#9aa4b8; --line:#333c4f;
+  --accent:#f5a623; --accent-fg:#241a04; --accent-soft:rgba(245,166,35,.15); --pulse:245,166,35;
+  --star:#e3c77a; --sep:#39455a; --read:#c7cfdd;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line);position:relative;z-index:6}
+.brand{font-size:13px;color:var(--muted)}
+.brand:hover{color:var(--ink)}
+.nav{display:flex;align-items:center;gap:18px}
+.nav a{font-size:13.5px;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.nav a.on{color:var(--ink);font-weight:600}
+.skins{display:flex;gap:7px;margin-left:4px}
+.sw{width:15px;height:15px;border-radius:50%;border:1px solid rgba(128,128,128,.4);cursor:pointer;padding:0;transition:transform .12s}
+.sw:hover{transform:scale(1.15)}
+.sw[data-skin="violet"]{background:#b388f5}
+.sw[data-skin="slate"]{background:#38bdf8}
+.sw[data-skin="nordic"]{background:#f5a623}
+.sw.on{outline:2px solid var(--ink);outline-offset:2px}
+
+.origin{font-family:var(--sans);font-size:10.5px;font-weight:500;border-radius:5px;padding:2px 7px;white-space:nowrap;flex-shrink:0}
+.origin.found{background:var(--accent);color:var(--accent-fg)}
+.origin.known{background:var(--accent-soft);color:var(--accent)}
+.star{color:var(--star)}
+.hr{height:1px;border:none;background:var(--accent);opacity:.4;margin:0}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

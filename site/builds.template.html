@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Builds</title>
+<meta name="description" content="The tools I design and ship, open source.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Awss Al-Mubarak">
+<meta property="og:title" content="Builds &middot; Awss Al-Mubarak">
+<meta property="og:description" content="The tools I design and ship, open source.">
+<meta property="og:url" content="https://awssalmubarak.com/builds/">
+<meta property="og:image" content="https://awssalmubarak.com/assets/og.png">
+<meta property="og:image:width" content="2560">
+<meta property="og:image:height" content="1280">
+<meta property="og:image:alt" content="awss al-mubarak">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Builds &middot; Awss Al-Mubarak">
+<meta name="twitter:description" content="The tools I design and ship, open source.">
+<meta name="twitter:image" content="https://awssalmubarak.com/assets/og.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@48,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+/* builds: a plain list of the tools i ship, each with a live run. a scrolling page. */
+.wrap{max-width:980px;margin:0 auto;padding-inline:22px;padding-block:40px 80px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;letter-spacing:-.02em;margin:0}
+.intro{font-size:14.5px;color:var(--read);margin-top:8px}
+.intro + .hr{margin-top:18px}
+
+.build{display:grid;grid-template-columns:1fr;gap:22px;padding:34px 0;border-bottom:1px solid var(--line)}
+.build:last-child{border-bottom:none}
+@media(min-width:820px){.build{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:center}}
+.build-body{display:flex;flex-direction:column;gap:14px;min-width:0}
+.build-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.build-name{font-size:clamp(24px,3.2vw,34px);font-weight:700;letter-spacing:-.015em;margin:0}
+.build-lang{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500}
+.build-stars{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--star)}
+.build-tagline{font-size:clamp(16px,1.8vw,19px);color:var(--ink);line-height:1.45;margin:0;max-width:48ch}
+.features{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.features li{position:relative;padding-left:18px;font-size:14px;color:var(--read);line-height:1.5;max-width:54ch}
+.features li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.build-foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:4px}
+.install{font-family:var(--mono);font-size:13.5px;color:var(--ink);background:var(--accent-soft);border-radius:8px;padding:9px 13px;user-select:all}
+.build-link{font-size:14px;font-weight:500;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:9px 16px}
+.build-link:hover{border-color:var(--accent)}
+.build-media{min-width:0}
+.build-media img{display:block;width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.build-caption{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+
+.coming{margin-top:34px;padding:22px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted);font-size:14px}
+
+/* backdrop: a blueprint. a faint drafting grid that drifts, with a drafting dial (rings, a
+   protractor scale, a crosshair and an inscribed square) turning slowly off to the side, the way
+   the home gears turn. it reads as "designed and built" behind the list of tools. */
+.backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  background-image:
+    linear-gradient(rgba(var(--pulse),.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(var(--pulse),.05) 1px,transparent 1px);
+  background-size:44px 44px;animation:gridpan 40s linear infinite}
+@keyframes gridpan{to{background-position:44px 44px}}
+.schem{position:absolute;top:50%;right:-7vw;width:min(66vh,650px);height:min(66vh,650px);
+  transform:translateY(-50%);animation:spin 95s linear infinite}
+.schem *{stroke:var(--accent);fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.schem .ring{opacity:.17;stroke-width:2}
+.schem .ring.dash{opacity:.22;stroke-dasharray:3 10}
+.schem .tick{opacity:.22;stroke-width:2}
+.schem .cross{opacity:.1;stroke-width:1.5}
+.schem .sq{opacity:.14;stroke-width:2}
+@keyframes spin{from{transform:translateY(-50%) rotate(0)}to{transform:translateY(-50%) rotate(360deg)}}
+/* phones: drop the blueprint backdrop, the list reads cleaner without it at narrow widths */
+@media (max-width:980px){.backdrop{display:none}}
+</style>
+</head>
+<body class="page">
+  <div class="backdrop" aria-hidden="true"></div>
+  <header class="bar">
+    <a class="brand" href="/">awss al-mubarak</a>
+    <nav class="nav">
+      <a href="/">home</a>
+      <a href="/contributions">contributions</a>
+      <a class="on" href="/builds">builds</a>
+      <span class="skins" id="skins" role="group" aria-label="theme">
+        <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
+        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
+      </span>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <h1>Builds</h1>
+    <div class="intro">Everything I've built, open source.</div>
+    <div class="hr"></div>
+    <div class="list" id="list"></div>
+    <div class="coming">more in the works</div>
+  </main>
+
+  <script>
+  /* build the drafting dial: a crosshair, three rings (one dashed), a 24-mark protractor scale
+     and an inscribed square. the whole dial turns slowly through the .schem spin animation. */
+  (function(){
+    var NS="http://www.w3.org/2000/svg", S=400, c=200;
+    function el(n){ return document.createElementNS(NS,n); }
+    var svg=el("svg"); svg.setAttribute("class","schem"); svg.setAttribute("viewBox","0 0 "+S+" "+S);
+    svg.setAttribute("aria-hidden","true");
+    function circle(r,cls){ var e=el("circle"); e.setAttribute("cx",c); e.setAttribute("cy",c);
+      e.setAttribute("r",r); e.setAttribute("class",cls); svg.appendChild(e); }
+    function line(x1,y1,x2,y2,cls){ var e=el("line"); e.setAttribute("x1",x1); e.setAttribute("y1",y1);
+      e.setAttribute("x2",x2); e.setAttribute("y2",y2); e.setAttribute("class",cls); svg.appendChild(e); }
+    line(c,8,c,S-8,"cross"); line(8,c,S-8,c,"cross");
+    circle(190,"ring dash"); circle(150,"ring"); circle(96,"ring"); circle(4,"ring");
+    var R=190;
+    for(var i=0;i<24;i++){ var a=i*15*Math.PI/180, r0=R-(i%6===0?16:9);
+      line(c+Math.cos(a)*r0, c+Math.sin(a)*r0, c+Math.cos(a)*R, c+Math.sin(a)*R, "tick"); }
+    var sq=el("polygon"); sq.setAttribute("points","200,50 350,200 200,350 50,200"); sq.setAttribute("class","sq");
+    svg.appendChild(sq);
+    var host=document.querySelector(".backdrop"); if(host) host.appendChild(svg);
+  })();
+  </script>
+
+  <script id="data" type="application/json">__DATA__</script>
+  <script src="/assets/site.js"></script>
+  <script>
+  (function(){
+    "use strict";
+    var D = JSON.parse(document.getElementById("data").textContent);
+    function esc(x){ return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function safeUrl(u){ u=String(u==null?"":u); return (/^https?:\/\//i.test(u)||u.charAt(0)==="/"||u.charAt(0)==="#") ? u.replace(/"/g,"%22") : "#"; }
+    function build(b){
+      var feats=(b.features||[]).map(function(f){ return '<li>'+esc(f)+'</li>'; }).join("");
+      var media = b.media ? '<div class="build-media"><img src="/'+esc(b.media)+'" alt="'+esc(b.name)+' running">'
+        + (b.caption?'<div class="build-caption">'+esc(b.caption)+'</div>':"")+'</div>' : "";
+      var stars = b.stars ? '<span class="build-stars">&#9733; '+esc(b.stars)+'</span>' : "";
+      var install = b.install ? '<code class="install">'+esc(b.install)+'</code>' : "";
+      var link = b.url ? '<a class="build-link" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener">Repo</a>' : "";
+      return '<article class="build">'
+        + '<div class="build-body"><div class="build-head"><h2 class="build-name">'+esc(b.name)+'</h2>'
+        + (b.language?'<span class="build-lang">'+esc(b.language)+'</span>':"")+stars+'</div>'
+        + '<p class="build-tagline">'+esc(b.tagline)+'</p>'
+        + (feats?'<ul class="features">'+feats+'</ul>':"")
+        + '<div class="build-foot">'+install+link+'</div></div>'
+        + media + '</article>';
+    }
+    document.getElementById("list").innerHTML = (D.builds||[]).map(build).join("");
+  })();
+  </script>
+</body>
+</html>
