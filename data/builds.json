@@ -7,11 +7,11 @@
       "stars": "102",
       "media": "assets/assay-run.svg",
       "caption": "a real run of assay on a live page",
-      "tagline": "A CLI that opens your web page in a real browser, finds every control, and tells you what broke.",
-      "home_tagline": "A Deterministic CLI that opens your web page in a real browser, finds every control, and tells you what broke. No LLM, no tests to write.",
+      "tagline": "A deterministic, browser-driven QA tool for web pages. No tests to write, no LLM.",
+      "home_tagline": "A deterministic, browser-driven QA tool for web pages. No tests to write, no LLM.",
       "features": [
         "Discovers every control the page renders and works out a test plan from it",
-        "Drives clicks, typing and navigation in a real chromium, not a mock, and tells you what broke",
+        "Exercises clicks, typing and navigation in a real Chromium, not a mock, and reports where the page contradicts itself",
         "Fully deterministic, with a median run time of 14s",
         "Ships with 15 wrappers that plug it into agentic coding harnesses as skills and plugins"
       ],
