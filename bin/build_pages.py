@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Build the three site pages from the templates and the data.
+
+  home          site/home.template.html          + stats, recent, featured, builds  -> site/index.html
+  contributions site/contributions.template.html + stats, repos                     -> site/contributions/index.html
+  builds        site/builds.template.html         + builds                           -> site/builds/index.html
+
+The JSON is inlined into each page's data script, so the pages load with no further
+requests beyond the shared /assets/site.css and /assets/site.js. Builds are sorted by stars,
+most first, so the builds page and the home's top three agree whatever order builds.json
+lists them in.
+"""
+import json
+import os
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.environ.get("SITE_ROOT") or os.path.dirname(HERE)
+SITE = os.path.join(ROOT, "site")
+
+
+def render(template_name, data):
+    """The page HTML: the template with the data inlined into its data script.
+
+    bench/builds.py renders the real template through this too, so it gets the same guard.
+    """
+    blob = json.dumps(data, ensure_ascii=False)
+    assert "</script" not in blob.lower(), "data would close the script tag early"
+    tpl = open(os.path.join(SITE, template_name), encoding="utf-8").read()
+    return tpl.replace("__DATA__", blob)
+
+
+def inline(template_name, data, out_path):
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    open(out_path, "w", encoding="utf-8").write(render(template_name, data))
+    print("wrote %s (%d bytes)" % (os.path.relpath(out_path, ROOT), os.path.getsize(out_path)))
+
+
+def by_stars(builds):
+    """Most stars first, then by name. builds.json stores stars as a string of digits."""
+    def stars(b):
+        return int(b["stars"]) if str(b.get("stars", "")).isdigit() else 0
+    return sorted(builds, key=lambda b: (-stars(b), b["name"].lower()))
+
+
+def build():
+    contrib = json.load(open(os.path.join(ROOT, "data", "contributions.json"), encoding="utf-8"))
+    builds = json.load(open(os.path.join(ROOT, "data", "builds.json"), encoding="utf-8"))
+    builds["builds"] = by_stars(builds["builds"])
+
+    inline("home.template.html",
+           {"stats": contrib["stats"], "recent": contrib["recent"],
+            "featured": contrib["featured"], "builds": builds["builds"]},
+           os.path.join(SITE, "index.html"))
+    inline("contributions.template.html",
+           {"stats": contrib["stats"], "repos": contrib["repos"]},
+           os.path.join(SITE, "contributions", "index.html"))
+    inline("builds.template.html",
+           {"builds": builds["builds"]},
+           os.path.join(SITE, "builds", "index.html"))
+
+
+if __name__ == "__main__":
+    build()

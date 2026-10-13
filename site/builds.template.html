@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Builds</title>
+<meta name="description" content="The tools I design and ship, open source.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Awss Al-Mubarak">
+<meta property="og:title" content="Builds &middot; Awss Al-Mubarak">
+<meta property="og:description" content="The tools I design and ship, open source.">
+<meta property="og:url" content="https://awssalmubarak.com/builds/">
+<meta property="og:image" content="https://awssalmubarak.com/assets/og.png">
+<meta property="og:image:width" content="2560">
+<meta property="og:image:height" content="1280">
+<meta property="og:image:alt" content="awss al-mubarak">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Builds &middot; Awss Al-Mubarak">
+<meta name="twitter:description" content="The tools I design and ship, open source.">
+<meta name="twitter:image" content="https://awssalmubarak.com/assets/og.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@48,700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<style>
+/* builds: the tools i ship, each previewed in a window frame. on desktop the list scrolls in the
+   shared contained box, and on phones the page scrolls under a pinned title. */
+.wrap{max-width:980px;margin:0 auto;padding-inline:22px;padding-block:22px 80px}
+/* the title, intro and divider stay pinned while the builds scroll under them. the box-shadow and
+   clip-path paint the background across the whole screen width without widening the layout. */
+.head{position:sticky;top:0;z-index:5;padding-top:18px;background:var(--bg);
+  box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;letter-spacing:-.02em;margin:0}
+.intro{font-size:14.5px;color:var(--read);margin-top:8px}
+.intro + .hr{margin-top:18px}
+
+.build{display:grid;grid-template-columns:1fr;gap:22px;padding:34px 0;border-bottom:1px solid var(--line)}
+.build:last-child{border-bottom:none}
+@media(min-width:820px){.build{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:center}}
+.build-body{display:flex;flex-direction:column;gap:14px;min-width:0}
+.build-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.build-name{font-size:clamp(24px,3.2vw,34px);font-weight:700;letter-spacing:-.015em;margin:0}
+/* lowercase so an acronym like HTML doesn't look heavier than Python, and to match the stacks */
+.build-lang{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500;text-transform:lowercase}
+.build-stars{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--star)}
+.build-tagline{font-size:clamp(16px,1.8vw,19px);color:var(--ink);line-height:1.45;margin:0;max-width:48ch}
+.features{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-direction:column;gap:9px}
+.features li{position:relative;padding-left:18px;font-size:14px;color:var(--read);line-height:1.5;max-width:54ch}
+.features li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.build-foot{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:4px}
+.install{font-family:var(--mono);font-size:13.5px;color:var(--ink);background:var(--accent-soft);border-radius:8px;padding:9px 13px;user-select:all}
+.build-link{font-size:14px;font-weight:500;color:var(--accent);border:1px solid var(--line);border-radius:8px;padding:9px 16px}
+.build-link:hover{border-color:var(--accent)}
+.build-media{min-width:0}
+/* every preview is a window with the shape of the assay terminal image (827x793). a terminal image
+   draws its own title bar. a browser window gets an HTML bar measured in cqw so its dots match the
+   terminal's at any width (dots r=6 at x=24/44/64 and y=22 on an 827-wide image). the view holds
+   the still image, with the live page or video faded in over it. */
+.frame{position:relative;display:flex;flex-direction:column;aspect-ratio:827/793;container-type:inline-size;
+  border-radius:12px;border:1px solid var(--line);overflow:hidden;background:#12131a}
+.fbar{position:relative;flex:0 0 5.32cqw;display:flex;align-items:center;justify-content:center}
+.fbar i{position:absolute;top:50%;width:1.45cqw;height:1.45cqw;border-radius:50%;transform:translate(-50%,-50%)}
+.fbar i:nth-child(1){left:2.90cqw;background:#ef6b73}
+.fbar i:nth-child(2){left:5.32cqw;background:#e2c15f}
+.fbar i:nth-child(3){left:7.74cqw;background:#5ac37d}
+.fbar .addr{font-family:var(--mono);font-size:max(9px,1.55cqw);color:#8b90a0;background:rgba(255,255,255,.06);
+  border-radius:999px;padding:.3cqw 2.4cqw;max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.view{position:relative;flex:1 1 auto;min-height:0;overflow:hidden}
+.view .still,.view video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+/* a live page is drawn at its own desktop size and scaled to the view by --s, set from script */
+.view iframe{position:absolute;top:0;left:0;border:0;transform-origin:0 0;transform:scale(var(--s,.35))}
+.view .live{opacity:0;transition:opacity .4s}
+.view .live.shown{opacity:1}
+/* a transparent button over the frame opens it large. it sits beside the frame rather than
+   around it, because a live page can't be inside a button. */
+.frame-wrap{position:relative}
+.enlarge{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;border-radius:12px;background:none;cursor:zoom-in}
+.enlarge:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.frame-wrap:hover .frame{border-color:var(--accent)}
+
+/* the enlarged view: a native modal dialog with a fresh copy of the preview, sized to fit the
+   screen in the frame's shape, with the caption, the links and a close button under it */
+.zoom{padding:0;border:0;background:none;color:var(--ink);max-width:none;max-height:none;overflow:visible}
+.zoom::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(3px)}
+.zoom-inner{width:min(92vw, calc((90vh - 64px) * 827 / 793))}
+.zoom .frame{border-radius:14px}
+.zoom-foot{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:12px}
+.zoom-cap{font-size:13px;color:var(--read);margin-right:auto}
+.zoom-close{background:none;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:14px;padding:8px 13px;cursor:pointer}
+.zoom-close:hover{border-color:var(--accent)}
+html:has(dialog[open]){overflow:hidden}
+.build-caption{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+
+.coming{margin-top:34px;padding:22px;border:1px dashed var(--line);border-radius:14px;text-align:center;color:var(--muted);font-size:14px}
+
+/* desktop: the shared contained layout in site.css, so the head stays put and only the builds
+   scroll, but open rather than boxed. the scrolling area has no panel of its own. it spans the
+   window so its scrollbar sits at the screen's edge, keeps the builds in line with the head (the
+   right padding gives back the 12px the scrollbar takes), and fades the builds out at its top
+   and bottom. a scroll that ends near the next build is finished by script (see settle),
+   because CSS scroll snap pulls a short scroll back to where it began. */
+@media (min-width:980px) and (min-height:620px){
+  .contained .wrap{padding-bottom:0}
+  .contained .head{position:static;padding-top:0;background:none;box-shadow:none;clip-path:none}
+  .contained .box{margin:0 calc(50% - 50vw);
+    padding:0 calc(50vw - 50% - 12px) 0 calc(50vw - 50%);
+    background:none;border:0;border-radius:0;box-shadow:none;animation:none;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px,#000 calc(100% - 48px),transparent);
+    mask-image:linear-gradient(to bottom,transparent 0,#000 28px,#000 calc(100% - 48px),transparent)}
+  .contained .box::-webkit-scrollbar-thumb{border-color:var(--bg)}
+  .contained .coming{margin-block:8px 60px}
+}
+
+/* backdrop: a blueprint. a faint drafting grid that drifts, with a drafting dial (rings, a
+   protractor scale, a crosshair and an inscribed square) turning slowly off to the side, the way
+   the home gears turn. it reads as "designed and built" behind the list of tools. */
+.backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;
+  background-image:
+    linear-gradient(rgba(var(--pulse),.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(var(--pulse),.05) 1px,transparent 1px);
+  background-size:44px 44px;animation:gridpan 40s linear infinite}
+@keyframes gridpan{to{background-position:44px 44px}}
+.schem{position:absolute;top:50%;right:-7vw;width:min(66vh,650px);height:min(66vh,650px);
+  transform:translateY(-50%);animation:spin 95s linear infinite}
+.schem *{stroke:var(--accent);fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.schem .ring{opacity:.17;stroke-width:2}
+.schem .ring.dash{opacity:.22;stroke-dasharray:3 10}
+.schem .tick{opacity:.22;stroke-width:2}
+.schem .cross{opacity:.1;stroke-width:1.5}
+.schem .sq{opacity:.14;stroke-width:2}
+@keyframes spin{from{transform:translateY(-50%) rotate(0)}to{transform:translateY(-50%) rotate(360deg)}}
+/* phones: drop the blueprint backdrop, the list reads cleaner without it at narrow widths */
+@media (max-width:980px){.backdrop{display:none}}
+</style>
+</head>
+<body class="page contained">
+  <div class="backdrop" aria-hidden="true"></div>
+  <header class="bar">
+    <a class="brand" href="/">awss al-mubarak</a>
+    <nav class="nav">
+      <a href="/">home</a>
+      <a href="/contributions">contributions</a>
+      <a class="on" href="/builds">builds</a>
+      <span class="skins" id="skins" role="group" aria-label="theme">
+        <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
+        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
+      </span>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <h1>Builds</h1>
+      <div class="intro">Everything I've built, open source.</div>
+      <div class="hr"></div>
+    </div>
+    <div class="box" id="box">
+      <div class="list" id="list"></div>
+      <div class="coming">more in the works</div>
+    </div>
+  </main>
+
+  <dialog class="zoom" id="zoom" closedby="any">
+    <div class="zoom-inner">
+      <div class="zoom-frame"></div>
+      <div class="zoom-foot"><span class="zoom-cap"></span><span class="zoom-links"></span>
+        <button class="zoom-close" type="button">Close</button></div>
+    </div>
+  </dialog>
+
+  <script>
+  /* build the drafting dial: a crosshair, three rings (one dashed), a 24-mark protractor scale
+     and an inscribed square. the whole dial turns slowly through the .schem spin animation. */
+  (function(){
+    var NS="http://www.w3.org/2000/svg", S=400, c=200;
+    function el(n){ return document.createElementNS(NS,n); }
+    var svg=el("svg"); svg.setAttribute("class","schem"); svg.setAttribute("viewBox","0 0 "+S+" "+S);
+    svg.setAttribute("aria-hidden","true");
+    function circle(r,cls){ var e=el("circle"); e.setAttribute("cx",c); e.setAttribute("cy",c);
+      e.setAttribute("r",r); e.setAttribute("class",cls); svg.appendChild(e); }
+    function line(x1,y1,x2,y2,cls){ var e=el("line"); e.setAttribute("x1",x1); e.setAttribute("y1",y1);
+      e.setAttribute("x2",x2); e.setAttribute("y2",y2); e.setAttribute("class",cls); svg.appendChild(e); }
+    line(c,8,c,S-8,"cross"); line(8,c,S-8,c,"cross");
+    circle(190,"ring dash"); circle(150,"ring"); circle(96,"ring"); circle(4,"ring");
+    var R=190;
+    for(var i=0;i<24;i++){ var a=i*15*Math.PI/180, r0=R-(i%6===0?16:9);
+      line(c+Math.cos(a)*r0, c+Math.sin(a)*r0, c+Math.cos(a)*R, c+Math.sin(a)*R, "tick"); }
+    var sq=el("polygon"); sq.setAttribute("points","200,50 350,200 200,350 50,200"); sq.setAttribute("class","sq");
+    svg.appendChild(sq);
+    var host=document.querySelector(".backdrop"); if(host) host.appendChild(svg);
+  })();
+  </script>
+
+  <script id="data" type="application/json">__DATA__</script>
+  <script src="/assets/site.js"></script>
+  <script>
+  (function(){
+    "use strict";
+    var D = JSON.parse(document.getElementById("data").textContent);
+    function esc(x){ return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+    function safeUrl(u){ u=String(u==null?"":u); return (/^https?:\/\//i.test(u)||u.charAt(0)==="/"||u.charAt(0)==="#") ? u.replace(/"/g,"%22") : "#"; }
+    /* how media loads. "scheduled" is what the site ships. "lazy" (the browser's own lazy loading)
+       and "eager" (everything live at once) exist so bench/builds.py can measure the same markup
+       under each, by setting window.__buildsPolicy before this script runs. */
+    var POLICY = ({eager:1, lazy:1, scheduled:1})[window.__buildsPolicy] ? window.__buildsPolicy : "scheduled";
+    // a live preview animates and costs data, so less motion or data saver gets stills only
+    var STILL_ONLY = !!((window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)
+      || (navigator.connection && navigator.connection.saveData));
+    function skin(){ return document.documentElement.getAttribute("data-skin") || "violet"; }
+    // a still can differ per theme, written as assets/name-{skin}.jpg
+    function stillUrl(tpl){ return "/" + String(tpl).replace("{skin}", skin()); }
+
+    // one window frame: a browser bar or none, then the view with the still and the live layer
+    function frame(b, i, now){
+      var p = b.preview || {}, kind = b.video ? "video" : (b.preview ? "page" : "");
+      var bar = b.frame === "browser"
+        ? '<div class="fbar" aria-hidden="true"><i></i><i></i><i></i><span class="addr">'+esc(b.address||"")+'</span></div>' : "";
+      var lazy = POLICY === "lazy" ? ' loading="lazy"' : "";
+      var first = i === 0 && POLICY === "scheduled" ? ' fetchpriority="high"' : "";
+      // the scheduler sets src from data-tpl when the frame comes near. the other policies set it now.
+      var src = POLICY === "scheduled" && i > 0 && !now ? "" : ' src="'+esc(stillUrl(b.media))+'"';
+      return '<div class="frame frame-'+esc(b.frame||"plain")+'">'+bar
+        + '<div class="view" data-kind="'+kind+'" data-i="'+i+'"'
+        + (kind === "page" ? ' data-src="'+esc(safeUrl(p.src))+'" data-w="'+(+p.width)+'" data-h="'+(+p.height)+'"' : "")
+        + (kind === "video" ? ' data-src="/'+esc(b.video)+'"' : "")
+        + '><img class="still" data-tpl="'+esc(b.media)+'"'+src+lazy+first
+        + ' alt="'+esc(b.alt || (b.name+' running'))+'" decoding="async"></div></div>';
+    }
+
+    function build(b, i){
+      var feats=(b.features||[]).map(function(f){ return '<li>'+esc(f)+'</li>'; }).join("");
+      var caption = b.caption ? '<div class="build-caption">'+esc(b.caption)+'</div>' : "";
+      var media = b.media ? '<div class="build-media"><div class="frame-wrap">'+frame(b, i)
+        + '<button class="enlarge" type="button" data-i="'+i+'" aria-label="Enlarge the '+esc(b.name)+' preview"></button></div>'
+        + caption+'</div>' : "";
+      var stars = b.stars ? '<span class="build-stars">&#9733; '+esc(b.stars)+'</span>' : "";
+      var install = b.install ? '<code class="install">'+esc(b.install)+'</code>' : "";
+      var site = b.site ? '<a class="build-link" href="'+safeUrl(b.site)+'" target="_blank" rel="noopener">Site</a>' : "";
+      var link = b.url ? '<a class="build-link" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener">Repo</a>' : "";
+      return '<article class="build">'
+        + '<div class="build-body"><div class="build-head"><h2 class="build-name">'+esc(b.name)+'</h2>'
+        + (b.language?'<span class="build-lang">'+esc(b.language)+'</span>':"")+stars+'</div>'
+        + '<p class="build-tagline">'+esc(b.tagline)+'</p>'
+        + (feats?'<ul class="features">'+feats+'</ul>':"")
+        + '<div class="build-foot">'+install+site+link+'</div></div>'
+        + media + '</article>';
+    }
+    document.getElementById("list").innerHTML = (D.builds||[]).map(build).join("");
+    var views = [].slice.call(document.querySelectorAll(".view"));
+
+    // scale a live page to the width its view gives it
+    function fit(view){ var w = +view.getAttribute("data-w"); if(w && view.clientWidth) view.style.setProperty("--s", view.clientWidth / w); }
+    var ro = window.ResizeObserver ? new ResizeObserver(function(es){ es.forEach(function(e){ fit(e.target); }); }) : null;
+    if(!ro) window.addEventListener("resize", function(){ views.forEach(fit); });
+
+    // reveal a live layer over the still once it has something to show. a page waits a second
+    // after load so its own entrance animation has run, then fades in behind two frames.
+    function reveal(el){ requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add("shown"); }); }); }
+
+    // put a live page or video into a view. returns the element so the scheduler can track it.
+    function goLive(view, opts){
+      var kind = view.getAttribute("data-kind"), el;
+      if(!kind || STILL_ONLY || view.querySelector(".live")) return null;
+      if(kind === "page"){
+        el = document.createElement("iframe");
+        el.className = "live"; el.width = view.getAttribute("data-w"); el.height = view.getAttribute("data-h");
+        el.setAttribute("scrolling", "no"); el.tabIndex = -1; el.inert = true; el.setAttribute("aria-hidden", "true");
+        if(opts && opts.lazy) el.loading = "lazy";
+        el.addEventListener("load", function(){ setTimeout(function(){ reveal(el); }, 1000); });
+        el.src = view.getAttribute("data-src");
+        fit(view); if(ro) ro.observe(view);
+      } else {
+        el = document.createElement("video");
+        el.className = "live"; el.muted = true; el.loop = true; el.playsInline = true;
+        el.setAttribute("muted", ""); el.setAttribute("playsinline", ""); el.setAttribute("aria-hidden", "true");
+        el.preload = (opts && opts.lazy) ? "metadata" : "auto"; el.autoplay = true;
+        el.addEventListener("playing", function(){ reveal(el); });
+        el.src = view.getAttribute("data-src");
+      }
+      view.appendChild(el);
+      return el;
+    }
+
+    var box = document.getElementById("box");
+    // on desktop the box scrolls itself (the shared contained layout). otherwise the page scrolls.
+    // read once and again only on resize, because reading computed style forces a style recalc.
+    function contained(){ var o = getComputedStyle(box).overflowY; return o === "auto" || o === "scroll"; }
+    var inBox = contained(), onLayout = [], rz = 0;
+    window.addEventListener("resize", function(){ clearTimeout(rz); rz = setTimeout(function(){
+      var now = contained(); if(now !== inBox){ inBox = now; onLayout.forEach(function(f){ f(); }); } }, 150); });
+
+    /* settle: when a scroll in the box ends within a third of the box short of the next build in
+       the direction it was going, finish it onto that build. it never moves back toward where the
+       scroll started, so a short scroll stays where it lands and nothing gets trapped. a page that
+       measures scrolling (the benchmark) turns it off with data-no-settle. */
+    (function(){
+      var rest = 0, mine = false, timer = 0, ends = "onscrollend" in box;
+      var smooth = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+      function stops(){
+        var top = box.getBoundingClientRect().top - box.scrollTop + (parseFloat(getComputedStyle(box).paddingTop) || 0);
+        var max = box.scrollHeight - box.clientHeight;
+        return [].map.call(box.querySelectorAll(".build"), function(b){ return Math.min(max, Math.round(b.getBoundingClientRect().top - top)); })
+          .concat([max]);
+      }
+      function end(){
+        if(mine){ mine = false; rest = box.scrollTop; return; }
+        var at = box.scrollTop, dir = at > rest ? 1 : at < rest ? -1 : 0, to = null;
+        rest = at;
+        if(!dir || !inBox || box.hasAttribute("data-no-settle")) return;
+        stops().forEach(function(p){ if((p - at) * dir > 2 && (to === null || Math.abs(p - at) < Math.abs(to - at))) to = p; });
+        if(to !== null && Math.abs(to - at) <= box.clientHeight / 3){ mine = true; rest = to; box.scrollTo({top: to, behavior: smooth ? "smooth" : "auto"}); }
+      }
+      box.addEventListener("scroll", function(){ if(!ends){ clearTimeout(timer); timer = setTimeout(end, 150); } }, {passive: true});
+      if(ends) box.addEventListener("scrollend", end);
+      window.addEventListener("resize", function(){ rest = box.scrollTop; });
+    })();
+
+    // a theme change swaps the stills that follow the theme. a live page follows on its own,
+    // because it shares this page's storage.
+    document.addEventListener("skin", function(){
+      [].forEach.call(document.querySelectorAll(".view .still"), function(img){ var tpl = img.getAttribute("data-tpl");
+        if(tpl.indexOf("{skin}") >= 0 && img.getAttribute("src")) img.src = stillUrl(tpl); });
+    });
+
+    // the scheduler fills these in, so the enlarged view can take the live previews' place
+    var media = {hold: function(){}, release: function(){}};
+
+    /* the media scheduler. every preview starts as its still. two observers watch each view, using
+       the box as the root on desktop and the window otherwise:
+         near  a ring one box (or window) beyond what's visible. coming into it loads the still,
+               and leaving it drops a live preview back to its still and frees a video's buffer.
+         seen  how much of the view is visible, normalised so a view taller than the box can
+               still count as fully seen.
+       a view goes live once it has been at least 60% seen for 250ms (a fast fling passes sooner)
+       and the browser is idle. at most two are live at once. when a third qualifies, a live one
+       under 60% seen makes room, and if both are on screen the newcomer waits, so nothing you're
+       looking at changes. videos pause while unseen, and everything waits while the tab is hidden. */
+    function scheduler(){
+      var LIVE_AT = 0.6, DWELL = 250, BUDGET = 2;
+      var state = [], live = [], nearObs = null, seenObs = null, held = false;
+      var stats = window.__media = {live: 0, peakLive: 0, upgrades: 0, demotions: 0};
+      var idle = window.requestIdleCallback
+        ? function(f){ requestIdleCallback(f, {timeout: 500}); } : function(f){ setTimeout(f, 50); };
+      views.forEach(function(v, i){ state[i] = {view: v, near: false, seen: 0, ready: false, timer: 0, el: null}; });
+      function of(v){ return state[+v.getAttribute("data-i")]; }
+
+      function loadStill(s){ var img = s.view.querySelector(".still");
+        if(!img.getAttribute("src")) img.src = stillUrl(img.getAttribute("data-tpl")); }
+      function demote(s){
+        clearTimeout(s.timer); s.timer = 0; s.ready = false;
+        if(!s.el) return;
+        if(s.el.tagName === "VIDEO"){ s.el.pause(); s.el.removeAttribute("src"); s.el.load(); }
+        s.el.remove(); s.el = null;
+        live = live.filter(function(x){ return x !== s; });
+        stats.demotions++; stats.live = live.length;
+      }
+      // make the readiest views live, most visible first, within the budget
+      function fill(){
+        if(held || document.hidden || STILL_ONLY) return;
+        state.filter(function(s){ return s.ready && !s.el && s.seen >= LIVE_AT; })
+          .sort(function(a, b){ return b.seen - a.seen; })
+          .forEach(function(s){
+            if(live.length >= BUDGET){
+              var out = null;
+              live.forEach(function(x){ if(x.seen < LIVE_AT && (!out || x.seen < out.seen)) out = x; });
+              if(!out) return;
+              demote(out);
+            }
+            s.el = goLive(s.view); s.ready = false;
+            if(!s.el) return;
+            live.push(s); stats.upgrades++; stats.live = live.length;
+            stats.peakLive = Math.max(stats.peakLive, live.length);
+          });
+      }
+      function seenShare(e){
+        var h = e.boundingClientRect.height, r = e.rootBounds ? e.rootBounds.height : innerHeight;
+        return e.isIntersecting && h ? Math.min(1, e.intersectionRect.height / Math.min(h, r)) : 0;
+      }
+      function watch(){
+        if(nearObs) nearObs.disconnect(); if(seenObs) seenObs.disconnect();
+        var root = inBox ? box : null, steps = [];
+        for(var t = 0; t <= 10; t++) steps.push(t / 10);
+        nearObs = new IntersectionObserver(function(es){
+          es.forEach(function(e){ var s = of(e.target); s.near = e.isIntersecting;
+            if(s.near) loadStill(s); else demote(s); });
+          fill();
+        }, {root: root, rootMargin: "100% 0px", threshold: 0});
+        seenObs = new IntersectionObserver(function(es){
+          es.forEach(function(e){ var s = of(e.target); s.seen = seenShare(e);
+            if(s.el && s.el.tagName === "VIDEO"){ if(!s.seen) s.el.pause(); else if(s.el.paused) s.el.play().catch(function(){}); }
+            if(s.seen < LIVE_AT){ clearTimeout(s.timer); s.timer = 0; s.ready = false; }
+            else if(!s.el && !s.ready && !s.timer){
+              s.timer = setTimeout(function(){ s.timer = 0; if(s.seen >= LIVE_AT){ s.ready = true; idle(fill); } }, DWELL);
+            }
+          });
+          fill();
+        }, {root: root, threshold: steps});
+        views.forEach(function(v){ nearObs.observe(v); seenObs.observe(v); });
+      }
+      document.addEventListener("visibilitychange", function(){
+        live.forEach(function(s){ if(s.el.tagName !== "VIDEO") return;
+          if(document.hidden) s.el.pause(); else if(s.seen) s.el.play().catch(function(){}); });
+        if(document.hidden) state.forEach(function(s){ clearTimeout(s.timer); s.timer = 0; });
+        else fill();
+      });
+      // while the enlarged view is open, the list holds no live previews of its own
+      media.hold = function(){ held = true; live.slice().forEach(demote); };
+      media.release = function(){ held = false;
+        state.forEach(function(s){ s.ready = s.seen >= LIVE_AT; }); idle(fill); };
+      // crossing the desktop breakpoint changes what scrolls, so the observers need a new root
+      onLayout.push(watch);
+      watch();
+    }
+
+    if(POLICY === "eager"){
+      views.forEach(function(view){ goLive(view); });
+    } else if(POLICY === "lazy"){
+      // the browser decides: lazy stills and live pages, and video that autoplays
+      views.forEach(function(view){ var img = view.querySelector(".still");
+        if(!img.getAttribute("src")){ img.src = stillUrl(img.getAttribute("data-tpl")); img.loading = "lazy"; }
+        goLive(view, {lazy:true}); });
+    } else {
+      scheduler();
+    }
+
+    /* enlarge: the dialog gets a fresh copy of the frame (moving a live page would reload it
+       anyway), with its still at once and its live layer straight after. focus goes back to the
+       button without scrolling, so the box doesn't move under the closing dialog. */
+    var zoom = document.getElementById("zoom"), opener = null;
+    document.getElementById("list").addEventListener("click", function(e){
+      var btn = e.target.closest(".enlarge"); if(!btn) return;
+      var i = +btn.getAttribute("data-i"), b = (D.builds||[])[i];
+      opener = btn;
+      zoom.querySelector(".zoom-frame").innerHTML = frame(b, i, true);
+      zoom.querySelector(".zoom-cap").textContent = b.caption || b.name;
+      zoom.querySelector(".zoom-links").innerHTML =
+        (b.site ? '<a class="build-link" href="'+safeUrl(b.site)+'" target="_blank" rel="noopener">Site</a> ' : "")
+        + (b.url ? '<a class="build-link" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener">Repo</a>' : "");
+      zoom.setAttribute("aria-label", b.name + " preview");
+      media.hold();
+      zoom.showModal();
+      goLive(zoom.querySelector(".view"));
+    });
+    zoom.addEventListener("click", function(e){ if(e.target === zoom || e.target.closest(".zoom-close")) zoom.close(); });
+    zoom.addEventListener("close", function(){
+      zoom.querySelector(".zoom-frame").innerHTML = "";
+      media.release();
+      if(opener) opener.focus({preventScroll: true});
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+[
+  {"key": "ente/ente #13069", "blurb": "A wrong-length key slipped past the one copy endpoint its siblings already guarded, leaving billed files no client could decrypt. Found on a live server, filed with its fix."},
+  {"key": "openclaw/openclaw #151672", "blurb": "A streaming command that hit the open-file limit silently killed the agent's shell. Traced the swallowed error and fixed the spawn."},
+  {"key": "vercel/next.js #99916", "blurb": "After a terminal resize, next dev kept printing server error code frames at its startup width, so they wrapped or were cut short. Now the CLI sends the server each new width."},
+  {"key": "electron/electron #54655", "blurb": "Electron apps in a non-ASCII folder failed to load on Linux unless the locale was UTF-8, because the archive path went through a locale conversion. Now it keeps the raw bytes."}
+]

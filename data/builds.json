@@ -1,0 +1,47 @@
+{
+  "builds": [
+    {
+      "name": "assay",
+      "url": "https://github.com/awss1i/assay",
+      "language": "Python",
+      "stars": "104",
+      "frame": "terminal",
+      "media": "assets/assay-run.svg",
+      "caption": "a real run of assay on a live page",
+      "tagline": "An agent-native QA CLI for web pages. Deterministic, no tests to write, no LLM.",
+      "home_tagline": "An agent-native QA CLI for web pages. Deterministic, no tests to write, no LLM.",
+      "features": [
+        "Discovers every control the page renders and works out a test plan from it",
+        "Exercises clicks, typing and navigation in a real Chromium and reports where the page contradicts itself",
+        "Fully deterministic, with a median run time of 14s",
+        "Comes with a skill for 15 coding agent harnesses and a plugin for Claude Code and the DeepSeek Harness"
+      ],
+      "install": "pip install assay-ui"
+    },
+    {
+      "name": "awssalmubarak.com",
+      "url": "https://github.com/awss1i/awssalmubarak.com",
+      "site": "https://awssalmubarak.com",
+      "language": "HTML",
+      "stars": "1",
+      "frame": "browser",
+      "address": "awssalmubarak.com",
+      "media": "assets/site-home-{skin}.jpg",
+      "preview": {
+        "src": "/",
+        "width": 1200,
+        "height": 1087
+      },
+      "alt": "the awssalmubarak.com home page",
+      "caption": "the home page",
+      "tagline": "My portfolio site, a static site with no dependencies that's built from plain data files.",
+      "home_tagline": "My portfolio site, a static site with no dependencies that's built from plain data files.",
+      "features": [
+        "A contributions ledger that only draws the rows on screen, so it stays fast with thousands of merged pull requests",
+        "A builds page that only runs the previews you're looking at, so it stays light however many builds it lists",
+        "Three colour themes",
+        "No framework, just plain HTML, CSS and JavaScript, with a Python standard-library build script"
+      ]
+    }
+  ]
+}
