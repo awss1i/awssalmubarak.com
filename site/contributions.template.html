@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Contributions</title>
-<meta name="description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta name="description" content="Every merged pull request, searchable by stack and sortable by stars, number of pull requests, recency or name.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Awss Al-Mubarak">
 <meta property="og:title" content="Contributions &middot; Awss Al-Mubarak">
-<meta property="og:description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta property="og:description" content="Every merged pull request, searchable by stack and sortable by stars, number of pull requests, recency or name.">
 <meta property="og:url" content="https://awssalmubarak.com/contributions/">
 <meta property="og:image" content="https://awssalmubarak.com/assets/og.png">
 <meta property="og:image:width" content="2560">
@@ -17,7 +17,7 @@
 <meta property="og:image:alt" content="awss al-mubarak">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Contributions &middot; Awss Al-Mubarak">
-<meta name="twitter:description" content="Every merged pull request, searchable by stack and sortable by stars, recency or name.">
+<meta name="twitter:description" content="Every merged pull request, searchable by stack and sortable by stars, number of pull requests, recency or name.">
 <meta name="twitter:image" content="https://awssalmubarak.com/assets/og.png">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@48,700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -73,7 +73,25 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
 .prstack{color:var(--read)}
 .carried a{color:var(--accent)}
 .carried a:hover{text-decoration:underline}
-.empty{color:var(--muted);font-size:14px;padding-block:30px}
+/* the empty list: a branch that leaves the trunk and never merges back, what matched nothing, and
+   a way out. on desktop it centres in the box, on phones it sits under the toolbar. */
+.vlbody.is-empty{flex:1 1 auto;display:flex;align-items:center;justify-content:center}
+.nomatch{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center;padding:40px 12px 64px}
+.nm-graph{width:96px;height:140px;margin-bottom:10px;overflow:visible}
+.nm-graph path,.nm-graph circle{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
+.nm-graph .trunk{opacity:.35}
+.nm-graph .node{fill:var(--accent);stroke:none;opacity:.5}
+.nm-graph .branch{stroke-dasharray:4 8;animation:nmflow 1.4s linear infinite}
+.nm-graph .ghost{opacity:.35;stroke-dasharray:0 7}
+@keyframes nmflow{to{stroke-dashoffset:-12}}
+.nm-msg{margin:0;font-size:15px;color:var(--ink)}
+.nm-msg b{font-family:var(--mono);font-size:.92em;font-weight:500;color:var(--accent)}
+.nm-hint{margin:0;font-size:13.5px;color:var(--muted)}
+.nm-try{font-family:var(--mono);font-size:12.5px;background:var(--accent-soft);color:var(--accent);border:0;border-radius:6px;padding:3px 9px;margin-left:2px;cursor:pointer}
+.nm-try:hover{background:var(--accent);color:var(--accent-fg)}
+.nm-acts{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.nm-btn{background:none;border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:12.5px;padding:7px 13px;cursor:pointer}
+.nm-btn:hover{border-color:var(--accent)}
 
 /* desktop: the shared contained layout in site.css holds the list in its scrolling box, so the
    toolbar no longer needs to stick. */
@@ -136,6 +154,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
           <span class="sortlabel">sort</span>
           <div class="seg" id="sort" role="group" aria-label="sort">
             <button type="button" data-s="stars" class="on">stars<span class="dir"></span></button>
+            <button type="button" data-s="prs">prs<span class="dir"></span></button>
             <button type="button" data-s="newest">newest<span class="dir"></span></button>
             <button type="button" data-s="az">a-z<span class="dir"></span></button>
           </div>
@@ -210,19 +229,26 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
       "<b>"+nfmt(s.merged)+"</b> merged pull requests across <b>"+nfmt(s.repos)+"</b> repositories, <b>"+nfmt(s.stacks)
       +"</b> languages and technologies, and <b>"+sfmt(s.stars)+"</b> stars.";
 
-    function visiblePRs(repo, terms){
+    // a term matches the start of any word in a stack, so "azure functions" and "functions" both
+    // find the "azure functions" stack
+    function tagMatches(tag, t){ tag=tag.toLowerCase(); return tag.indexOf(t)===0 || tag.indexOf(" "+t)>=0; }
+    function visiblePRs(repo, terms, origin){
+      origin=origin||state.origin;
       return repo.prs.filter(function(pr){
-        if(state.origin!=="all" && pr.origin!==state.origin) return false;
+        if(origin!=="all" && pr.origin!==origin) return false;
         for(var i=0;i<terms.length;i++){ var t=terms[i];
-          if(!(pr.stack||[]).some(function(x){ return x.toLowerCase().indexOf(t)===0; })) return false; }
+          if(!(pr.stack||[]).some(function(x){ return tagMatches(x,t); })) return false; }
         return true;
       });
     }
-    function sortRepos(repos){
-      var a=repos.slice(), d=state.dir;
-      if(state.sort==="newest") a.sort(function(x,y){ return (y.top_seq-x.top_seq)*d; });
-      else if(state.sort==="az") a.sort(function(x,y){ return x.name.toLowerCase().localeCompare(y.name.toLowerCase())*d; });
-      else a.sort(function(x,y){ return (y.stars_num-x.stars_num)*d; });
+    // sorts the rows rather than the repos, so "prs" counts the merges a row shows under the
+    // current filter and search, not the repo's total. a tie on prs goes to the most stars.
+    function sortRows(a){
+      var d=state.dir;
+      if(state.sort==="newest") a.sort(function(x,y){ return (y.repo.top_seq-x.repo.top_seq)*d; });
+      else if(state.sort==="az") a.sort(function(x,y){ return x.repo.name.toLowerCase().localeCompare(y.repo.name.toLowerCase())*d; });
+      else if(state.sort==="prs") a.sort(function(x,y){ return (y.hits.length-x.hits.length)*d || y.repo.stars_num-x.repo.stars_num; });
+      else a.sort(function(x,y){ return (y.repo.stars_num-x.repo.stars_num)*d; });
       return a;
     }
     function paintSort(){
@@ -249,6 +275,72 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
         + (open ? '<div class="repo-prs">'+hits.map(prLine).join("")+'</div>' : "");
     }
 
+    /* the empty list says which terms matched nothing, suggests the closest stack for a typo, and
+       offers the other filter when only the filter hides the matches. the stack counts are built on
+       the first empty search, so they cost nothing at load. */
+    var ORIGIN_NAME={found:"found &amp; fixed", known:"known issues"}, TAGS=null;
+    var GRAPH='<svg class="nm-graph" viewBox="0 0 96 140" aria-hidden="true">'
+      + '<path class="trunk" d="M28 4 L28 136"/><circle class="node" cx="28" cy="13" r="3.5"/>'
+      + '<circle class="node" cx="28" cy="78" r="3.5"/><circle class="node" cx="28" cy="130" r="3.5"/>'
+      + '<path class="branch" d="M28 22 C28 45 68 39 68 62 L68 80"/><circle cx="68" cy="86" r="6"/>'
+      + '<path class="ghost" d="M68 94 C68 113 28 105 28 124"/></svg>';
+    function stackCounts(){
+      if(!TAGS){ TAGS={};
+        D.repos.forEach(function(r){ r.prs.forEach(function(pr){ (pr.stack||[]).forEach(function(t){
+          t=t.toLowerCase(); TAGS[t]=(TAGS[t]||0)+1; }); }); }); }
+      return TAGS;
+    }
+    function hasTag(t){ for(var k in stackCounts()) if(tagMatches(k,t)) return true; return false; }
+    // edits to turn a into b, counting a swap of two neighbouring letters as one
+    function editDistance(a,b){
+      var d=[], i, j;
+      for(i=0;i<=a.length;i++) d[i]=[i];
+      for(j=1;j<=b.length;j++) d[0][j]=j;
+      for(i=1;i<=a.length;i++) for(j=1;j<=b.length;j++){
+        d[i][j]=Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+        if(i>1 && j>1 && a[i-1]===b[j-2] && a[i-2]===b[j-1]) d[i][j]=Math.min(d[i][j], d[i-2][j-2]+1);
+      }
+      return d[a.length][b.length];
+    }
+    // the stack a mistyped term most likely meant: a tag, or one word of a tag (search matches
+    // each word), within 1 edit for a term of up to 4 letters and 2 for a longer one. the fewest
+    // edits wins, then the stack with the most merges.
+    function closestTag(t){
+      var tags=stackCounts(), best=null, bestD=t.length<=4?1:2, bestN=0;
+      Object.keys(tags).forEach(function(tag){ [tag].concat(tag.split(" ")).forEach(function(c){
+        var d=editDistance(t,c), n=0; if(d>bestD) return;
+        for(var k in tags) if(tagMatches(k,c)) n+=tags[k];
+        if(d<bestD || n>bestN){ best=c; bestD=d; bestN=n; }
+      }); });
+      return best;
+    }
+    function countMatches(terms, origin){ var n=0; D.repos.forEach(function(r){ n+=visiblePRs(r,terms,origin).length; }); return n; }
+    function names(list, joiner){
+      var b=list.map(function(t){ return "<b>"+esc(t)+"</b>"; });
+      return b.length>1 ? b.slice(0,-1).join(", ")+" "+joiner+" "+b[b.length-1] : b[0];
+    }
+    function emptyHTML(q, terms){
+      var dead=terms.filter(function(t){ return !hasTag(t); }), scoped=state.origin!=="all",
+          other=state.origin==="found"?"known":"found", msg, hint="", acts="";
+      if(!q) msg=scoped ? "nothing in "+ORIGIN_NAME[state.origin]+" yet" : "no merges yet";
+      else if(dead.length) msg="no merges use "+names(dead,"or");
+      else msg=(scoped ? "nothing in "+ORIGIN_NAME[state.origin]+" uses " : "no merge uses ")
+        + names(terms,"and")+(terms.length>1?" together":"");
+      if(dead.length){
+        var fixed=terms.map(function(t){ return dead.indexOf(t)<0 ? t : closestTag(t); })
+          .filter(function(t, i, all){ return all.indexOf(t)===i; });
+        if(fixed.indexOf(null)<0 && countMatches(fixed,"all"))
+          hint='did you mean <button class="nm-try" type="button" data-act="try" data-q="'+esc(fixed.join(" "))+'">'
+            + esc(fixed.join(" "))+'</button>?';
+      } else if(q && scoped){
+        var n=countMatches(terms, other);
+        if(n) acts+='<button class="nm-btn" type="button" data-act="origin" data-o="'+other+'">show '+n+' in '+ORIGIN_NAME[other]+'</button>';
+      }
+      if(q) acts+='<button class="nm-btn" type="button" data-act="clear">clear search</button>';
+      return '<div class="nomatch">'+GRAPH+'<p class="nm-msg">'+msg+'</p>'
+        + (hint?'<p class="nm-hint">'+hint+'</p>':"")+(acts?'<div class="nm-acts">'+acts+'</div>':"")+'</div>';
+    }
+
     // a tall spacer whose height is the sum of all rows; only the rows near the viewport are in the
     // DOM, positioned absolutely by their running offset.
     var vlbody=document.createElement("div"); vlbody.className="vlbody"; listEl.appendChild(vlbody);
@@ -260,7 +352,7 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
     function recomputeOffsets(){
       offsets=new Array(rows.length+1); offsets[0]=0;
       for(var i=0;i<rows.length;i++) offsets[i+1]=offsets[i]+heights[i];
-      vlbody.style.height=offsets[rows.length]+"px";
+      vlbody.style.height=rows.length ? offsets[rows.length]+"px" : "";
     }
     function detectMode(){ var ov=getComputedStyle(listEl).overflowY; mode=(ov==="auto"||ov==="scroll")?"container":"window"; }
     function viewport(){
@@ -282,8 +374,8 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
       return el;
     }
     function renderWindow(){
-      if(rows.length===0){ for(var g in rendered){ if(rendered[g].parentNode) vlbody.removeChild(rendered[g]); } rendered={};
-        vlbody.style.height=""; vlbody.innerHTML='<p class="empty">nothing matches that.</p>'; return; }
+      // rebuild draws the empty list once, so scrolling and resizing leave it alone
+      if(rows.length===0) return;
       var vp=viewport(), start=findRow(vp.top-BUFFER), end=findRow(vp.top+vp.height+BUFFER), i;
       if(start<0) start=0; if(end>rows.length-1) end=rows.length-1;
       for(var k in rendered){ i=+k; if(i<start||i>end){ vlbody.removeChild(rendered[i]); delete rendered[i]; } }
@@ -305,13 +397,15 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
     function rebuild(){
       var q=search.value.trim().toLowerCase(), terms=q?q.split(/\s+/).filter(Boolean):[], searching=q.length>0;
       rows=[];
-      sortRepos(D.repos).forEach(function(repo){ var hits=visiblePRs(repo,terms); if(hits.length) rows.push({repo:repo, hits:hits, forceOpen:searching}); });
+      D.repos.forEach(function(repo){ var hits=visiblePRs(repo,terms); if(hits.length) rows.push({repo:repo, hits:hits, forceOpen:searching}); });
+      sortRows(rows);
       heights=rows.map(estHeight);
       vlbody.innerHTML=""; rendered={};
+      vlbody.classList.toggle("is-empty", !rows.length);
       recomputeOffsets();
       clearBtn.hidden=!q;
       if(mode==="container") listEl.scrollTop=0;
-      renderWindow();
+      if(rows.length) renderWindow(); else vlbody.innerHTML=emptyHTML(q, terms);
     }
     // measure a real collapsed and a real open row once, so off-screen estimates (and the scrollbar)
     // stay close to the truth.
@@ -331,6 +425,12 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
     function attachScroll(){ (mode==="container"?listEl:window).addEventListener("scroll", onScroll, {passive:true}); }
 
     listEl.addEventListener("click", function(e){
+      var act=e.target.closest("[data-act]");
+      if(act){ var a=act.getAttribute("data-act");
+        if(a==="try"){ search.value=act.getAttribute("data-q"); clearTimeout(deb); rebuild(); }
+        else if(a==="origin") setOrigin(act.getAttribute("data-o"));
+        else if(a==="clear") clearSearch();
+        return; }
       if(e.target.closest("a")) return;
       var el=e.target.closest(".repo"); if(!el || !vlbody.contains(el)) return;
       var i=+el.getAttribute("data-i"), r=rows[i]; if(!r) return;
@@ -340,16 +440,18 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);lin
     });
     // a new category starts with every repo closed, so a repo opened in one category isn't still
     // open in the next. a new sort keeps them, because it's the same list in a different order.
-    originEl.addEventListener("click", function(e){ var b=e.target.closest("button[data-o]"); if(!b) return;
-      state.origin=b.getAttribute("data-o"); state.expanded={}; var all=originEl.querySelectorAll("button");
-      for(var i=0;i<all.length;i++) all[i].classList.toggle("on", all[i]===b); rebuild(); });
+    function setOrigin(o){
+      state.origin=o; state.expanded={}; var all=originEl.querySelectorAll("button");
+      for(var i=0;i<all.length;i++) all[i].classList.toggle("on", all[i].getAttribute("data-o")===o); rebuild(); }
+    originEl.addEventListener("click", function(e){ var b=e.target.closest("button[data-o]"); if(b) setOrigin(b.getAttribute("data-o")); });
     sortEl.addEventListener("click", function(e){ var b=e.target.closest("button[data-s]"); if(!b) return;
       var ns=b.getAttribute("data-s");
       if(ns===state.sort) state.dir=-state.dir; else { state.sort=ns; state.dir=1; }
       paintSort(); rebuild(); });
     var deb;
     search.addEventListener("input", function(){ clearBtn.hidden=!search.value; clearTimeout(deb); deb=setTimeout(rebuild,120); });
-    clearBtn.addEventListener("click", function(){ search.value=""; clearTimeout(deb); rebuild(); search.focus(); });
+    function clearSearch(){ search.value=""; clearTimeout(deb); rebuild(); search.focus(); }
+    clearBtn.addEventListener("click", clearSearch);
     var rz;
     window.addEventListener("resize", function(){ clearTimeout(rz); rz=setTimeout(function(){
       var old=mode; detectMode();

@@ -171,6 +171,18 @@ class LedgerTest(unittest.TestCase):
         for part in ("IntersectionObserver", "function scheduler"):
             self.assertIn(part, builds)
 
+    def test_ledger_sorts_by_prs_and_explains_an_empty_search(self):
+        # the ledger sorts by how many merges each row shows, search matches every word of a
+        # stack, and a search that matches nothing names what it searched and suggests the
+        # closest stack
+        shutil.copytree(os.path.join(ROOT, "site"), os.path.join(self.tmp, "site"))
+        self.assertEqual(run_bin("site_data.py", [], self.tmp).returncode, 0)
+        self.assertEqual(run_bin("build_pages.py", [], self.tmp).returncode, 0)
+        contrib = read(os.path.join(self.tmp, "site", "contributions", "index.html"))
+        self.assertIn('data-s="prs"', contrib)
+        for part in ("function sortRows", "function tagMatches", "function closestTag", "function emptyHTML"):
+            self.assertIn(part, contrib)
+
     def test_both_lists_share_the_contained_box(self):
         css = read(os.path.join(ROOT, "site", "assets", "site.css"))
         self.assertIn(".contained .box", css)
