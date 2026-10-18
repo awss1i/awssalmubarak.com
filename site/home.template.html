@@ -33,10 +33,12 @@
 .app{display:flex;flex-direction:column;gap:18px;padding:24px 22px}
 
 .numblock{display:flex;flex-direction:column;gap:3px}
-.count{font-family:var(--display);font-weight:700;font-size:clamp(76px,15vw,128px);line-height:.82;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums}
+/* the count is glass lettering like the other headings, but leans further into the theme colour */
+.count{font-family:var(--display);font-weight:700;font-size:clamp(76px,15vw,128px);line-height:.82;letter-spacing:-.03em;font-variant-numeric:tabular-nums;
+  background-image:linear-gradient(180deg,rgba(255,255,255,.9),rgba(var(--pulse),.95) 55%,rgba(var(--pulse),.6))}
 .count-label{font-family:var(--display);font-weight:700;font-size:clamp(22px,4vw,34px);letter-spacing:-.01em;margin-top:4px}
-.statement{font-family:var(--mono);font-size:12.5px;color:var(--read);margin-top:14px;max-width:46ch;line-height:1.65}
-.statement b{color:var(--ink);font-weight:500}
+.statement{font-family:var(--mono);font-size:12.5px;margin-top:14px;max-width:46ch;line-height:1.65}
+.statement b{font-weight:500}
 .numblock .hr{width:min(100%,360px);margin-top:16px}
 /* .numblock is a flex column, which stretches its children to its full width, so the link keeps
    to its own width or its click area runs far past the words */
@@ -48,7 +50,7 @@
 .opensource .os-desc{display:block;font-size:12px;color:var(--muted);margin-top:3px}
 
 .about{display:flex;flex-direction:column;gap:11px}
-.about-line{font-size:14.5px;color:var(--ink);font-weight:500;max-width:40ch;line-height:1.45}
+.about-line{font-size:14.5px;font-weight:500;max-width:40ch;line-height:1.45}
 .contact{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:13px;color:var(--muted)}
 .email{color:var(--muted);user-select:all;margin-right:2px}
 .email:hover{color:var(--accent)}
@@ -156,9 +158,9 @@
   <div class="app">
     <div class="gears"><svg class="gearsvg" viewBox="0 0 1000 560" preserveAspectRatio="xMinYMid slice"></svg></div>
     <section class="numblock">
-      <div class="count" id="count">0</div>
-      <div class="count-label">merged pull requests</div>
-      <div class="statement" id="statement"></div>
+      <div class="count glass-head" id="count">0</div>
+      <div class="count-label glass-head">merged pull requests</div>
+      <div class="statement glass-text" id="statement"></div>
       <div class="hr"></div>
       <a class="browse" href="/contributions">browse all contributions</a>
       <div class="opensource"><a class="os-main" href="https://github.com/awss1i/awssalmubarak.com" target="_blank" rel="noopener">this site is open source</a><span class="os-desc">Designed and built by me, no framework.</span></div>
@@ -176,7 +178,7 @@
       <div class="build-list" id="build-list"></div>
     </section>
     <section class="about">
-      <div class="about-line">18, London. Open to remote or London-based roles, and to contract work.</div>
+      <div class="about-line glass-text">18, London. Open to remote or London-based roles, and to contract work.</div>
       <div class="contact">
         <a class="email" href="mailto:awss@awssalmubarak.com">awss@awssalmubarak.com</a>
         <a class="soc" href="https://github.com/awss1i" target="_blank" rel="noopener" aria-label="github"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.2 11.16.6.11.82-.25.82-.56v-2.1c-3.34.72-4.04-1.6-4.04-1.6-.55-1.37-1.34-1.74-1.34-1.74-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.22 1.84 1.22 1.07 1.8 2.8 1.28 3.49.98.11-.76.42-1.28.76-1.57-2.67-.3-5.47-1.31-5.47-5.84 0-1.29.47-2.34 1.23-3.17-.12-.3-.53-1.52.12-3.17 0 0 1-.32 3.3 1.21a11.6 11.6 0 0 1 6 0c2.3-1.53 3.3-1.21 3.3-1.21.65 1.65.24 2.87.12 3.17.77.83 1.23 1.88 1.23 3.17 0 4.54-2.81 5.53-5.49 5.83.43.37.82 1.1.82 2.22v3.29c0 .32.22.69.83.57A12.02 12.02 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"/></svg></a>

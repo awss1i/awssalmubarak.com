@@ -34,7 +34,7 @@
 .head{position:sticky;top:0;z-index:5;padding-top:18px;background:var(--bg);
   box-shadow:0 0 0 100vmax var(--bg);clip-path:inset(0 -100vmax)}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;letter-spacing:-.02em;margin:0}
-.intro{font-size:14.5px;color:var(--read);margin-top:8px}
+.intro{font-size:14.5px;margin-top:8px}
 .intro + .hr{margin-top:18px}
 
 .build{display:grid;grid-template-columns:1fr;gap:22px;padding:34px 0;border-bottom:1px solid var(--line)}
@@ -155,8 +155,8 @@ html:has(dialog[open]){overflow:hidden}
 
   <main class="wrap">
     <div class="head">
-      <h1>Builds</h1>
-      <div class="intro">Everything I've built, open source.</div>
+      <h1 class="glass-head">Builds</h1>
+      <div class="intro glass-text">Everything I've built, open source.</div>
       <div class="hr"></div>
     </div>
     <div class="box" id="box">
@@ -243,7 +243,7 @@ html:has(dialog[open]){overflow:hidden}
       var site = b.site ? '<a class="build-link" href="'+safeUrl(b.site)+'" target="_blank" rel="noopener">Site</a>' : "";
       var link = b.url ? '<a class="build-link" href="'+safeUrl(b.url)+'" target="_blank" rel="noopener">Repo</a>' : "";
       return '<article class="build">'
-        + '<div class="build-body"><div class="build-head"><h2 class="build-name">'+esc(b.name)+'</h2>'
+        + '<div class="build-body"><div class="build-head"><h2 class="build-name glass-head">'+esc(b.name)+'</h2>'
         + (b.language?'<span class="build-lang">'+esc(b.language)+'</span>':"")+stars+'</div>'
         + '<p class="build-tagline">'+esc(b.tagline)+'</p>'
         + (feats?'<ul class="features">'+feats+'</ul>':"")

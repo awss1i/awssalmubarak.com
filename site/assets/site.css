@@ -60,6 +60,17 @@ button{font:inherit;color:inherit}
 .star{color:var(--star)}
 .hr{height:1px;border:none;background:var(--accent);opacity:.4;margin:0}
 
+/* tinted glass lettering for headings (.glass-head) and the text under them (.glass-text): white
+   at the top melting into the theme colour, with a theme glow, the way the glass panels carry a
+   hint of it. background-clip:text paints the gradient through every glyph, children included.
+   the glow is a drop-shadow filter, because a text-shadow would paint over the clipped gradient.
+   the text gradient repeats every line (1lh), so each line is lit from its own top. */
+.glass-head,.glass-text{color:transparent;-webkit-background-clip:text;background-clip:text}
+.glass-head{background-image:linear-gradient(180deg,rgba(255,255,255,.97) 10%,rgba(var(--pulse),.72));
+  -webkit-text-stroke:1px rgba(255,255,255,.22);filter:drop-shadow(0 0 22px rgba(var(--pulse),.4))}
+.glass-text{background-image:linear-gradient(180deg,rgba(255,255,255,.95),rgba(var(--pulse),.85));
+  background-size:100% 1lh;filter:drop-shadow(0 0 10px rgba(var(--pulse),.25))}
+
 /* contained layout, for a page whose body carries .contained: on desktop the page itself doesn't
    scroll. the header stays put and the .box below it is a rounded, softly pulsing glass panel that
    scrolls inside itself, clear of the bottom of the screen. narrower or shorter windows scroll the
