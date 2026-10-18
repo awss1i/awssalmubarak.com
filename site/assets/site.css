@@ -1,6 +1,6 @@
 /* shared shell for awssalmubarak.com: theme tokens (three skins), base reset, the top bar,
-   and the few primitives every page uses (origin badge, star and readable-secondary colours).
-   violet is the merge colour. each page adds its own layout CSS on top of this. */
+   and the few primitives every page uses (origin badge, star and readable-secondary colours,
+   the glass panel). violet is the merge colour. each page adds its own layout CSS on top of this. */
 :root{
   color-scheme:dark;
   --bg:#111116; --surface:#1a1a22; --ink:#ececf2; --muted:#a6a6b2; --line:#2a2a34;
@@ -9,11 +9,23 @@
   --display:"Bricolage Grotesque","Archivo",system-ui,sans-serif;
   --sans:"Archivo",system-ui,-apple-system,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  /* frosted glass for panels over the animated backdrops: a faint sheen and theme tint over a
+     light blur, a lit top edge, and a bevelled rim (the border, a dark 1px gap, then a thin bright
+     line inside) with a soft inner glow. --glass-rim goes first in a panel's box-shadow, and in
+     any keyframes that animate it. */
+  --glass-fill:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0) 140px),rgba(var(--pulse),.016);
+  --glass-edge:rgba(255,255,255,.1); --glass-lit:rgba(255,255,255,.3);
+  --glass-blur:blur(3.2px) saturate(180%);
+  --glass-rim:inset 0 0 0 1px rgba(0,0,0,.4),inset 0 0 0 2px rgba(255,255,255,.18),
+    inset 0 0 28px rgba(255,255,255,.035),inset 0 0 48px rgba(var(--pulse),.05);
 }
 :root[data-skin="slate"]{
-  --bg:#0f172a; --surface:#1e293b; --ink:#e8edf5; --muted:#94a3b8; --line:#2a3a54;
-  --accent:#38bdf8; --accent-fg:#06222e; --accent-soft:rgba(56,189,248,.14); --pulse:56,189,248;
-  --star:#fbbf24; --sep:#2f405c; --read:#c5d0e0;
+  --bg:#14171d; --surface:#1c2029; --ink:#e8ecf4; --muted:#9aa0ae; --line:#2a2e38;
+  --accent:#5b7bff; --accent-fg:#050b1a; --accent-soft:rgba(91,123,255,.15); --pulse:91,123,255;
+  --star:#fbbf24; --sep:#2f343f; --read:#cacdd7;
+  /* this glass takes colour out of what's behind it, so the panels stay a dull grey with a hint
+     of blue rather than picking up the page's blue cast */
+  --glass-blur:blur(3.2px) saturate(55%);
 }
 :root[data-skin="nordic"]{
   --bg:#1e2430; --surface:#242c3d; --ink:#e6eaf2; --muted:#9aa4b8; --line:#333c4f;
@@ -38,7 +50,7 @@ button{font:inherit;color:inherit}
 .sw{width:15px;height:15px;border-radius:50%;border:1px solid rgba(128,128,128,.4);cursor:pointer;padding:0;transition:transform .12s}
 .sw:hover{transform:scale(1.15)}
 .sw[data-skin="violet"]{background:#b388f5}
-.sw[data-skin="slate"]{background:#38bdf8}
+.sw[data-skin="slate"]{background:#5b7bff}
 .sw[data-skin="nordic"]{background:#f5a623}
 .sw.on{outline:2px solid var(--ink);outline-offset:2px}
 
@@ -49,24 +61,25 @@ button{font:inherit;color:inherit}
 .hr{height:1px;border:none;background:var(--accent);opacity:.4;margin:0}
 
 /* contained layout, for a page whose body carries .contained: on desktop the page itself doesn't
-   scroll. the header stays put and the .box below it is a rounded, softly pulsing panel that scrolls
-   inside itself, clear of the bottom of the screen. narrower or shorter windows scroll the page.
-   no scrollbar-color or scrollbar-width here, because setting either makes Chrome ignore the
+   scroll. the header stays put and the .box below it is a rounded, softly pulsing glass panel that
+   scrolls inside itself, clear of the bottom of the screen. narrower or shorter windows scroll the
+   page. no scrollbar-color or scrollbar-width here, because setting either makes Chrome ignore the
    ::-webkit-scrollbar rules. */
-@keyframes boxbreathe{0%,100%{box-shadow:0 18px 40px -26px rgba(0,0,0,.6),0 0 0 1px transparent}
-  50%{box-shadow:0 22px 48px -22px rgba(0,0,0,.68),0 0 0 1px rgba(var(--pulse),.28)}}
+@keyframes boxbreathe{0%,100%{box-shadow:var(--glass-rim),0 18px 40px -26px rgba(0,0,0,.6),0 0 0 1px transparent}
+  50%{box-shadow:var(--glass-rim),0 22px 48px -22px rgba(0,0,0,.68),0 0 0 1px rgba(var(--pulse),.28)}}
 @media (min-width:980px) and (min-height:620px){
   body.contained{height:100%;display:flex;flex-direction:column;overflow:hidden}
   .contained .wrap{flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;padding-block:26px 52px}
   .contained .box{flex:1 1 auto;min-height:0;margin-top:18px;overflow-y:auto;
-    background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 24px;
-    box-shadow:0 18px 40px -26px rgba(0,0,0,.6);animation:boxbreathe 4.6s ease-in-out infinite;
+    background:var(--glass-fill);border:1px solid var(--glass-edge);border-top-color:var(--glass-lit);
+    border-radius:18px;padding:10px 24px;-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+    box-shadow:var(--glass-rim),0 18px 40px -26px rgba(0,0,0,.6);animation:boxbreathe 4.6s ease-in-out infinite;
     scrollbar-gutter:stable}
   .contained .box::-webkit-scrollbar{width:12px}
   .contained .box::-webkit-scrollbar-track{background:transparent;margin:16px 0}
   .contained .box::-webkit-scrollbar-button{display:none;height:0;width:0}
   .contained .box::-webkit-scrollbar-button:single-button{display:none;height:0;width:0}
-  .contained .box::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px;border:4px solid var(--surface)}
+  .contained .box::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px;border:4px solid transparent;background-clip:padding-box}
   .contained .box::-webkit-scrollbar-thumb:hover{background:var(--muted)}
 }
 

@@ -108,6 +108,7 @@ html:has(dialog[open]){overflow:hidden}
   .contained .box{margin:0 calc(50% - 50vw);
     padding:0 calc(50vw - 50% - 12px) 0 calc(50vw - 50%);
     background:none;border:0;border-radius:0;box-shadow:none;animation:none;
+    -webkit-backdrop-filter:none;backdrop-filter:none;
     -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px,#000 calc(100% - 48px),transparent);
     mask-image:linear-gradient(to bottom,transparent 0,#000 28px,#000 calc(100% - 48px),transparent)}
   .contained .box::-webkit-scrollbar-thumb{border-color:var(--bg)}
@@ -146,7 +147,7 @@ html:has(dialog[open]){overflow:hidden}
       <a class="on" href="/builds">builds</a>
       <span class="skins" id="skins" role="group" aria-label="theme">
         <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
-        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="slate" title="steel blue" aria-label="steel blue"></button>
         <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
       </span>
     </nav>

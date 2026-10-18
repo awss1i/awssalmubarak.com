@@ -56,12 +56,12 @@
 .soc svg{width:19px;height:19px;fill:currentColor;display:block}
 .soc:hover{color:var(--accent);transform:translateY(-2px)}
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px 17px;display:flex;flex-direction:column;min-height:0;
-  box-shadow:0 18px 40px -24px rgba(0,0,0,.72);animation:breathe 4.6s ease-in-out infinite, float 7.5s ease-in-out infinite}
+.card{background:var(--glass-fill);border:1px solid var(--glass-edge);border-top-color:var(--glass-lit);border-radius:16px;padding:15px 17px;display:flex;flex-direction:column;min-height:0;
+  box-shadow:var(--glass-rim),0 18px 40px -24px rgba(0,0,0,.72);animation:breathe 4.6s ease-in-out infinite, float 7.5s ease-in-out infinite}
 .card-featured{animation-delay:.9s,1.3s}
 .card-builds{animation-delay:1.8s,2.6s}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes breathe{0%,100%{box-shadow:0 18px 40px -24px rgba(0,0,0,.72),0 0 0 1px transparent}50%{box-shadow:0 22px 48px -22px rgba(0,0,0,.78),0 0 0 1px rgba(var(--pulse),.26)}}
+@keyframes breathe{0%,100%{box-shadow:var(--glass-rim),0 18px 40px -24px rgba(0,0,0,.72),0 0 0 1px transparent}50%{box-shadow:var(--glass-rim),0 22px 48px -22px rgba(0,0,0,.78),0 0 0 1px rgba(var(--pulse),.26)}}
 .card-h{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--muted);padding-bottom:9px;margin-bottom:5px;border-bottom:1px solid var(--line)}
 .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:ping 1.8s ease-out infinite}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(var(--pulse),.5)}70%{box-shadow:0 0 0 7px rgba(var(--pulse),0)}100%{box-shadow:0 0 0 0 rgba(var(--pulse),0)}}
@@ -120,6 +120,8 @@
   }
   .gears{display:block;position:absolute;inset:0;z-index:0;pointer-events:none}
   .numblock,.about,.card{z-index:1}
+  /* the cards frost the gears behind them. phones draw no gears, so they skip the blur */
+  .card{-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur)}
   .numblock{grid-area:num; align-self:start}
   .count{font-size:clamp(96px,11vw,176px)}
   .card-recent{grid-area:recent}
@@ -145,7 +147,7 @@
       <a href="/builds">builds</a>
       <span class="skins" id="skins" role="group" aria-label="theme">
         <button class="sw" type="button" data-skin="violet" title="dark violet" aria-label="dark violet"></button>
-        <button class="sw" type="button" data-skin="slate" title="deep slate" aria-label="deep slate"></button>
+        <button class="sw" type="button" data-skin="slate" title="steel blue" aria-label="steel blue"></button>
         <button class="sw" type="button" data-skin="nordic" title="nordic slate" aria-label="nordic slate"></button>
       </span>
     </nav>
